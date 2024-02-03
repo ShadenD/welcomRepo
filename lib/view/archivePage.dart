@@ -1,7 +1,10 @@
-// ignore: file_names
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
-import 'package:welcom/editUser.dart';
-import 'package:welcom/sqlitedb2.dart';
+import 'package:get/get.dart';
+import 'package:welcom/view/editUser.dart';
+import 'package:welcom/view/login2.dart';
+import 'package:welcom/model/sqlitedb2.dart';
 
 class Archives extends StatefulWidget {
   const Archives({super.key});
@@ -43,7 +46,7 @@ class _ArchivesState extends State<Archives> {
         leading: IconButton(
           onPressed: () {
             setState(() {
-              Navigator.pop(context);
+               Get.to(Loginpage2());
             });
           },
           icon: const Icon(
@@ -88,6 +91,7 @@ class _ArchivesState extends State<Archives> {
               shrinkWrap: true,
               itemBuilder: (context, i) {
                 return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   // height: 150,
                   child: Card(
                     elevation: 9,

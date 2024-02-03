@@ -1,51 +1,27 @@
+// ignore_for_file: must_be_immutable
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:welcom/archivePage.dart';
-import 'package:welcom/remember_me_controller.dart';
-import 'package:welcom/signup1.dart';
-import 'package:welcom/sqlitedb2.dart';
+import 'package:welcom/controller/logincontroller.dart';
+import 'package:welcom/main.dart';
+import 'package:welcom/view/archivePage.dart';
+import 'package:welcom/controller/remember_me_controller.dart';
+import 'package:welcom/view/home.dart';
+import 'package:welcom/view/signup1.dart';
+import 'package:welcom/model/sqlitedb2.dart';
 
-class Loginpage2 extends StatefulWidget {
-  const Loginpage2({super.key});
-
-  @override
-  State<Loginpage2> createState() => _Loginpage2State();
-}
-
-class _Loginpage2State extends State<Loginpage2> {
+class Loginpage2 extends StatelessWidget {
+  Loginpage2({super.key});
   TextEditingController textEditingController = TextEditingController();
   TextEditingController passEditingController = TextEditingController();
   bool isEmailCorrect = false;
   bool passToggle = true;
-  //bool haspasswardOnNumber = false;
-  //bool isPasswordEightCharacters = false;
-  final RememberMeController controller = Get.put(RememberMeController());
+  RememberMeController controller = Get.put(RememberMeController());
+  LoginPageController controller2 = Get.put(LoginPageController());
+  SqlDB sqldb = SqlDB();
+  bool rem = false;
 
   GlobalKey<FormState> formstate = GlobalKey();
-  SqlDB sqldb = SqlDB();
-  Future<List<Map>> readData() async {
-    List<Map> response = await sqldb.readData(
-        "SELECT email,pass FROM users where email= '{$textEditingController}'");
-    return response;
-  }
-
-  @override
-  void dispose() {
-    textEditingController.dispose();
-    super.dispose();
-  }
-
-  dynamic snackBar = SnackBar(
-    backgroundColor: Colors.green,
-    duration: const Duration(milliseconds: 1500),
-    content: const Text("Congrats!😁 Your Email is valid"),
-    action: SnackBarAction(
-      label: 'Got it',
-      textColor: Colors.white,
-      onPressed: () {},
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +33,7 @@ class _Loginpage2State extends State<Loginpage2> {
         backgroundColor: isEmailCorrect == false ? Colors.white : Colors.green,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Get.to(HomePage());
           },
           icon: const Icon(
             Icons.arrow_back_ios,
@@ -120,30 +96,36 @@ class _Loginpage2State extends State<Loginpage2> {
                             ),
                             FadeInUp(
                                 duration: const Duration(milliseconds: 1200),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 0, horizontal: 10),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.grey.shade400)),
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.grey.shade400)),
+                                child: GetBuilder<LoginPageController>(
+                                  builder: (cont) => TextFormField(
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 0, horizontal: 10),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade400)),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade400)),
+                                    ),
+                                    controller:
+                                        controller2.textEditingController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "الحقل فارغ";
+                                      } else if (RegExp(
+                                              r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                          .hasMatch(value)) {
+                                      } else {
+                                        return "Enter valid Email";
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  controller: textEditingController,
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "الحقل فارغ";
-                                    } else if (RegExp(
-                                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                                        .hasMatch(value)) {
-                                    } else {
-                                      return "Enter valid Email";
-                                    }
-                                    return null;
-                                  },
                                 )),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -165,45 +147,50 @@ class _Loginpage2State extends State<Loginpage2> {
                                 FadeInUp(
                                     duration:
                                         const Duration(milliseconds: 1200),
-                                    child: TextFormField(
-                                      obscureText: passToggle,
-                                      decoration: InputDecoration(
-                                        suffix: InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              passToggle = !passToggle;
-                                            });
-                                          },
-                                          child: Icon(
-                                            passToggle
-                                                ? Icons.visibility
-                                                : Icons.visibility_off,
-                                            color: Colors.grey,
+                                    child: GetX<LoginPageController>(
+                                      builder: (controller2) => TextFormField(
+                                        obscureText:
+                                            controller2.passToggle.value,
+                                        decoration: InputDecoration(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 0, horizontal: 10),
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey.shade400)),
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey.shade400)),
+                                          suffix: InkWell(
+                                            onTap: () {
+                                              controller2.passToggle.value =
+                                                  !controller2.passToggle.value;
+                                            },
+                                            child: Icon(
+                                              passToggle
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: Colors.grey,
+                                            ),
                                           ),
                                         ),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 0, horizontal: 10),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade400)),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade400)),
+                                        controller:
+                                            controller2.passEditingController,
+                                        keyboardType:
+                                            TextInputType.visiblePassword,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Enter your passward";
+                                          } else if (controller2
+                                                  .passEditingController
+                                                  .text
+                                                  .length <
+                                              6) {
+                                            return "Passward length should be more than 6 characters ";
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                      controller: passEditingController,
-                                      keyboardType:
-                                          TextInputType.visiblePassword,
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Enter your passward";
-                                        } else if (passEditingController
-                                                .text.length <
-                                            6) {
-                                          return "Passward length should be more than 6 characters ";
-                                        }
-                                        return null;
-                                      },
                                     )),
                               ],
                             ),
@@ -222,8 +209,15 @@ class _Loginpage2State extends State<Loginpage2> {
                           child: Obx(
                             () => Checkbox(
                               value: controller.rememberMe.value,
-                              onChanged: (value) {
+                              onChanged: (value) async {
                                 controller.toggleRememberMe(value!);
+                                if (value) {
+                                  sharedPreferences!.setString(
+                                      'email', textEditingController.text);
+                                  sharedPreferences!.setString(
+                                      'pass', passEditingController.text);
+                                  controller2.remember();
+                                }
                               },
                             ),
                           ),
@@ -258,7 +252,7 @@ class _Loginpage2State extends State<Loginpage2> {
                               if (formstate.currentState!.validate()) {
                                 // ignore: unused_local_variable
                                 List<Map> response2 = await sqldb.readData(
-                                    "SELECT * FROM users WHERE email='${textEditingController.text}'");
+                                    "SELECT * FROM users WHERE email='${controller2.textEditingController.text}'");
                                 // ignore: avoid_print
                                 print(response2);
                                 // ignore: unrelated_type_equality_checks, use_build_context_synchronously
@@ -268,11 +262,7 @@ class _Loginpage2State extends State<Loginpage2> {
                                       'User with the provided email does not exist!');
                                 } else {
                                   // ignore: use_build_context_synchronously
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Archives()),
-                                  );
+                                  Get.to(() => const Archives());
                                 }
                               }
                             },
@@ -301,11 +291,7 @@ class _Loginpage2State extends State<Loginpage2> {
                                   fontWeight: FontWeight.w600, fontSize: 18),
                             ),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SignupPage()),
-                              );
+                              Get.to(SignupPage());
                             },
                           ),
                         ],

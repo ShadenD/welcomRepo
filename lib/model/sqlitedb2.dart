@@ -3,7 +3,7 @@
 import 'package:sqflite/sqflite.dart'; // تحتوي على ال join
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
-import 'package:welcom/user.dart';
+import 'package:welcom/model/user.dart';
 
 class SqlDB {
   static Database? _db;
@@ -11,13 +11,12 @@ class SqlDB {
     if (_db == null) {
       _db = await initdb();
       // ignore: recursive_getters
-      return _db; // _db not db      db is a function
+      return _db;
     } else {
       // ignore: recursive_getters
       return _db;
     }
   }
-
 
   initdb() async {
     print("initdb initdb initdb");
@@ -47,6 +46,31 @@ CREATE TABLE "users"(
 "email" TEXT NOT NULL,
 "pass" TEXT NOT NULL,
 "bod" TEXT NOT NULL
+
+
+)
+    ''');
+    await db.execute('''
+CREATE TABLE "orders"(
+"order_id" INTEGER  PRIMARY KEY AUTOINCREMENT,
+"order_date" TEXT NOT NULL,
+"order_amount" INTEGER NOT NULL,
+"equal_order_amount" INTEGER NOT NULL,
+"curr_id" INTEGER NOT NULL,
+"status" BOOLEAN NOT NULL,
+"type" TEXT NOT NULL,
+"user_id" INTEGER NOT NULL,
+FOREIGN KEY (curr_id) REFERENCES currency(currency_id),
+FOREIGN KEY (user_id) REFERENCES users(id)
+
+)
+    ''');
+    await db.execute('''
+CREATE TABLE "currency"(
+"currency_id" INTEGER  PRIMARY KEY AUTOINCREMENT,
+"curreny_name" TEXT NOT NULL,
+"currency_symbol" TEXT NOT NULL,
+"rate" REAL NOT NULL
 )
     ''');
   }

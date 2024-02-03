@@ -1,17 +1,28 @@
+// ignore_for_file: file_names, use_build_context_synchronously
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
-import 'package:welcom/login2.dart';
-import 'package:welcom/sqlitedb2.dart';
+import 'package:welcom/view/archivePage.dart';
+import 'package:welcom/model/sqlitedb2.dart';
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+class Edit extends StatefulWidget {
+  final int id;
+  final String username;
+  final String email;
+  final String pass;
+  const Edit(
+      {super.key,
+      required this.id,
+      required this.username,
+      required this.email,
+      required this.pass});
 
   @override
-  State<SignupPage> createState() => _SignupPage();
+  State<Edit> createState() => _SignupPage();
 }
 
-class _SignupPage extends State<SignupPage> {
+class _SignupPage extends State<Edit> {
   TextEditingController textEditingController = TextEditingController();
   TextEditingController userEditingController = TextEditingController();
 
@@ -37,9 +48,19 @@ class _SignupPage extends State<SignupPage> {
   }
 
   SqlDB sqldb = SqlDB();
+
   Future<List<Map>> readData() async {
     List<Map> response = await sqldb.readData("SELECT * FROM users");
     return response;
+  }
+
+  @override
+  void initState() {
+    textEditingController.text = widget.email;
+    userEditingController.text = widget.username;
+    passEditingController.text = widget.pass;
+
+    super.initState();
   }
 
   @override
@@ -74,7 +95,7 @@ class _SignupPage extends State<SignupPage> {
                   FadeInUp(
                       duration: const Duration(milliseconds: 1000),
                       child: const Text(
-                        "Sign up",
+                        "Edit User",
                         style: TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold),
                       )),
@@ -84,7 +105,7 @@ class _SignupPage extends State<SignupPage> {
                   FadeInUp(
                       duration: const Duration(milliseconds: 1200),
                       child: Text(
-                        "Create an account, It's free",
+                        "Edit your information",
                         style: TextStyle(fontSize: 15, color: Colors.grey[700]),
                       )),
                 ],
@@ -296,7 +317,7 @@ class _SignupPage extends State<SignupPage> {
                     ),
                     FlutterPwValidator(
                       defaultColor: Colors.black,
-                      controller: passEditingController,
+                      controller: controller,
                       successColor: Colors.green.shade700,
                       minLength: 8,
                       uppercaseCharCount: 1,
@@ -339,49 +360,29 @@ class _SignupPage extends State<SignupPage> {
                       height: 60,
                       onPressed: () async {
                         if (formstate.currentState!.validate()) {
-                          var response = await sqldb.insertData(
-                              "INSERT INTO 'users' ('username','email','pass','bod') VALUES('${userEditingController.text}','${textEditingController.text}','${passEditingController.text}','30-11-2001')");
-                          // ignore: avoid_print
-                          print(response);
-                          // ignore: avoid_print
-                          print("Data filled successfully");
-                          textEditingController.clear();
-                          passEditingController.clear();
-                          confirmpassword.clear();
+                          int respons = await sqldb.updateData(
+                              ''' UPDATE users SET username= "${userEditingController.text}" ,
+                              email= "${textEditingController.text}" ,
+                               pass= "${passEditingController.text}"
+                              WHERE id=${widget.id}
+                               ''');
+                          if (respons > 0) {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => const Archives()));
+                          }
                         }
                       },
-                      color: Colors.greenAccent,
+                      color: Colors.blue,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50)),
                       child: const Text(
-                        "Sign up",
+                        "Edit",
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 18),
                       ),
                     ),
-                  )),
-              FadeInUp(
-                  duration: const Duration(milliseconds: 1600),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Already have an account?"),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Loginpage2()),
-                          );
-                        },
-                        child: const Text(
-                          " Login",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 18),
-                        ),
-                      ),
-                    ],
                   )),
             ],
           ),

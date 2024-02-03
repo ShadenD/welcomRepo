@@ -1,65 +1,32 @@
+// ignore_for_file: must_be_immutable
+
+import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
-import 'package:welcom/archivePage.dart';
-import 'package:welcom/sqlitedb2.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:welcom/controller/signupcontroller.dart';
+import 'package:welcom/view/login2.dart';
+import 'package:welcom/model/sqlitedb2.dart';
 
-class Edit extends StatefulWidget {
-  final int id;
-  final String username;
-  final String email;
-  final String pass;
-  const Edit(
-      {super.key,
-      required this.id,
-      required this.username,
-      required this.email,
-      required this.pass});
-
-  @override
-  State<Edit> createState() => _SignupPage();
-}
-
-class _SignupPage extends State<Edit> {
+class SignupPage extends StatelessWidget {
+  SignupPage({super.key});
   TextEditingController textEditingController = TextEditingController();
   TextEditingController userEditingController = TextEditingController();
-
   TextEditingController passEditingController = TextEditingController();
-  bool isEmailCorrect = false;
-  bool passToggle = true;
-//  final bool _isPasswordEightCharacters = false;
-  // final bool _hasPasswordOneNumber = false;
-  final TextEditingController controller = TextEditingController();
-  bool success = false;
-  late String vall;
-
-  TextEditingController confirmpassword = TextEditingController();
-  GlobalKey<FormState> formstate = GlobalKey();
-  onPasswordChanged(String password) {
-    final numericRegex = RegExp(r'[0-9]');
-
-    setState(() {
-      if (password.length >= 8) {}
-
-      if (numericRegex.hasMatch(password)) {}
-    });
-  }
+  SignupPageController controller3 = Get.put(SignupPageController());
 
   SqlDB sqldb = SqlDB();
 
-  Future<List<Map>> readData() async {
-    List<Map> response = await sqldb.readData("SELECT * FROM users");
-    return response;
-  }
-
-  @override
-  void initState() {
-    textEditingController.text = widget.email;
-    userEditingController.text = widget.username;
-    passEditingController.text = widget.pass;
-
-    super.initState();
-  }
+  bool isEmailCorrect = false;
+  bool passToggle = true;
+  final TextEditingController controller = TextEditingController();
+  TextEditingController confirmpassword = TextEditingController();
+  bool success = false;
+  late String vall;
+  GlobalKey<FormState> formstate = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +48,7 @@ class _SignupPage extends State<Edit> {
         ),
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           height: MediaQuery.of(context).size.height - 30,
@@ -93,7 +61,7 @@ class _SignupPage extends State<Edit> {
                   FadeInUp(
                       duration: const Duration(milliseconds: 1000),
                       child: const Text(
-                        "Edit User",
+                        "Sign up",
                         style: TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold),
                       )),
@@ -103,15 +71,60 @@ class _SignupPage extends State<Edit> {
                   FadeInUp(
                       duration: const Duration(milliseconds: 1200),
                       child: Text(
-                        "Edit your information",
+                        "Create an account, It's free",
                         style: TextStyle(fontSize: 15, color: Colors.grey[700]),
                       )),
                 ],
               ),
+              // const SizedBox(
+              //   height: 40,
+              // ),
               Form(
                 key: formstate,
                 child: Column(
-                  children: <Widget>[
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                          width: 20,
+                        ),
+                        Obx(
+                          () => SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: controller3.selectedImagePath.value == ''
+                                  ? const Text(
+                                      "select image from camera/gallery")
+                                  : ClipOval(
+                                      child: Image.file(File(
+                                          controller3.selectedImagePath.value)),
+                                    )),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                          width: 20,
+                        ),
+                        Obx(() => Text(
+                              controller3.selectedImageSize.value == ''
+                                  ? ''
+                                  : controller3.selectedImageSize.value,
+                              style: const TextStyle(fontSize: 20),
+                            )),
+                        IconButton(
+                            onPressed: () {
+                              controller3.pickImage(ImageSource.camera);
+                            },
+                            icon: const Icon(Icons.camera_alt_outlined)),
+                        IconButton(
+                            onPressed: () {
+                              controller3.pickImage(ImageSource.gallery);
+                            },
+                            icon: const Icon(Icons.photo_album_outlined)),
+                      ],
+                    ),
                     const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -213,42 +226,45 @@ class _SignupPage extends State<Edit> {
                     ),
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
-                        child: TextFormField(
-                          onChanged: (password) => onPasswordChanged(password),
-                          obscureText: passToggle,
-                          decoration: InputDecoration(
-                            suffix: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  passToggle = !passToggle;
-                                });
-                              },
-                              child: Icon(
-                                passToggle
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.grey,
+                        child: Obx(
+                          () => TextFormField(
+                            // onChanged: (password) =>
+                            //     controller3.onPasswordChanged(password),
+                            obscureText: controller3.passToggle.value,
+                            decoration: InputDecoration(
+                              suffix: InkWell(
+                                onTap: () {
+                                  controller3.passToggle.value =
+                                      !controller3.passToggle.value;
+                                },
+                                child: Icon(
+                                  controller3.passToggle.value
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
                               ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
+                              border: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
+                            controller: passEditingController,
+                            keyboardType: TextInputType.visiblePassword,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Enter your passward";
+                              } else if (passEditingController.text.length <
+                                  6) {
+                                return "Passward length should be more than 6 characters ";
+                              }
+                              return null;
+                            },
                           ),
-                          controller: passEditingController,
-                          keyboardType: TextInputType.visiblePassword,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Enter your passward";
-                            } else if (passEditingController.text.length < 6) {
-                              return "Passward length should be more than 6 characters ";
-                            }
-                            return null;
-                          },
                         )),
                     const SizedBox(
                       height: 2,
@@ -269,71 +285,71 @@ class _SignupPage extends State<Edit> {
                     ),
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
-                        child: TextFormField(
-                          onChanged: (password) => onPasswordChanged(password),
-                          obscureText: passToggle,
-                          decoration: InputDecoration(
-                            suffix: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  passToggle = !passToggle;
-                                });
-                              },
-                              child: Icon(
-                                passToggle
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.grey,
+                        child: Obx(
+                          () => TextFormField(
+                            // onChanged: (password) =>
+                            //     controller3.onPasswordChanged(password),
+                            obscureText: controller3.passToggle.value,
+                            decoration: InputDecoration(
+                              suffix: InkWell(
+                                onTap: () {
+                                  controller3.passToggle.value =
+                                      !controller3.passToggle.value;
+                                },
+                                child: Icon(
+                                  controller3.passToggle.value
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
                               ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
+                              border: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
+                            controller: confirmpassword,
+                            keyboardType: TextInputType.visiblePassword,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please re-enter password';
+                              }
+
+                              if (passEditingController.text !=
+                                  confirmpassword.text) {
+                                return "Password does not match";
+                              }
+
+                              return null;
+                            },
                           ),
-                          controller: confirmpassword,
-                          keyboardType: TextInputType.visiblePassword,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please re-enter password';
-                            }
-
-                            if (passEditingController.text !=
-                                confirmpassword.text) {
-                              return "Password does not match";
-                            }
-
-                            return null;
-                          },
                         )),
                     const SizedBox(
                       height: 2,
                     ),
-                    FlutterPwValidator(
-                      defaultColor: Colors.black,
-                      controller: controller,
-                      successColor: Colors.green.shade700,
-                      minLength: 8,
-                      uppercaseCharCount: 1,
-                      numericCharCount: 2,
-                      specialCharCount: 1,
-                      normalCharCount: 4,
-                      width: 350,
-                      height: 150,
-                      onSuccess: () {
-                        setState(() {
-                          success = true;
-                        });
-                      },
-                      onFail: () {
-                        setState(() {
-                          success = false;
-                        });
-                      },
+                    GetBuilder<SignupPageController>(
+                      builder: (c) => FlutterPwValidator(
+                        defaultColor: Colors.black,
+                        controller: passEditingController,
+                        successColor: Colors.green.shade700,
+                        minLength: 8,
+                        uppercaseCharCount: 1,
+                        numericCharCount: 2,
+                        specialCharCount: 1,
+                        normalCharCount: 4,
+                        width: 350,
+                        height: 150,
+                        onSuccess: () {
+                          controller3.succ;
+                        },
+                        onFail: () {
+                          controller3.fail;
+                        },
+                      ),
                     ),
                     const SizedBox(
                       height: 2,
@@ -358,29 +374,45 @@ class _SignupPage extends State<Edit> {
                       height: 60,
                       onPressed: () async {
                         if (formstate.currentState!.validate()) {
-                          int respons = await sqldb.updateData(
-                              ''' UPDATE users SET username= "${userEditingController.text}" ,
-                              email= "${textEditingController.text}" ,
-                               pass= "${passEditingController.text}"
-                              WHERE id=${widget.id}
-                               ''');
-                          if (respons > 0) {
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => const Archives()));
-                          }
+                          var response = await sqldb.insertData(
+                              "INSERT INTO 'users' ('username','email','pass','bod') VALUES('${userEditingController.text}','${textEditingController.text}','${passEditingController.text}','30-11-2001')");
+                          // ignore: avoid_print
+                          print(response);
+                          // ignore: avoid_print
+                          print("Data filled successfully");
+                          textEditingController.clear();
+                          passEditingController.clear();
+                          confirmpassword.clear();
                         }
                       },
-                      color: Colors.blue,
+                      color: Colors.greenAccent,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50)),
                       child: const Text(
-                        "Edit",
+                        "Sign up",
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 18),
                       ),
                     ),
+                  )),
+              FadeInUp(
+                  duration: const Duration(milliseconds: 1600),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Already have an account?"),
+                      InkWell(
+                        onTap: () {
+                          Get.to(Loginpage2());
+                        },
+                        child: const Text(
+                          " Login",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 18),
+                        ),
+                      ),
+                    ],
                   )),
             ],
           ),
