@@ -1,60 +1,80 @@
-// ignore_for_file: file_names
-
+// ignore_for_file: file_names, must_be_immutable
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:welcom/view/editUser.dart';
-import 'package:welcom/view/login2.dart';
+import 'package:welcom/controller/archivecontroller.dart';
+import 'package:welcom/controller/drawercontroller.dart';
 import 'package:welcom/model/sqlitedb2.dart';
+import 'package:welcom/view/editUser.dart';
+import 'package:welcom/view/home.dart';
 
-class Archives extends StatefulWidget {
-  const Archives({super.key});
-
-  @override
-  State<Archives> createState() => _ArchivesState();
-}
-
-class _ArchivesState extends State<Archives> {
+class Archives extends GetView<ArchiveController> {
+  Archives({super.key});
   SqlDB sqldb = SqlDB();
-  List users = [];
   TextEditingController teSeach = TextEditingController();
-
-  readData() async {
-    List<Map> response = await sqldb.readData("SELECT * FROM users");
-    users.addAll(response);
-  }
-
-  filter(String val) {
-    setState(() {
-      Iterable filterUser = users.where(
-          (element) => element['username'] == val || element['email'] == val);
-      users.replaceRange(0, users.length, filterUser.toList());
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    readData();
-  }
+  DrawerController1 controller1 = Get.put(DrawerController1());
+  ArchiveController archivecontroller = Get.put(ArchiveController());
+  var scaffoldkey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldkey,
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+                child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/1.jpg',
+                  height: 70,
+                  width: 70,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text('Welcome to your app'),
+              ],
+            )),
+            ListTile(
+              onTap: () {
+                controller1.usersOpen();
+                scaffoldkey.currentState!.closeDrawer();
+              },
+              title: const Text('Users'),
+            ),
+            ListTile(
+              onTap: () {
+                controller1.currencyOpen();
+                scaffoldkey.currentState!.closeDrawer();
+              },
+              title: const Text('Currency'),
+            ),
+            ListTile(
+              onTap: () {
+                controller1.orederOpen();
+                scaffoldkey.currentState!.closeDrawer();
+              },
+              title: const Text('Orders'),
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Users Archives"),
-        leading: IconButton(
-          onPressed: () {
-            setState(() {
-               Get.to(Loginpage2());
-            });
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-            color: Colors.black,
-          ),
-        ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Get.to(() => HomePage());
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -64,21 +84,18 @@ class _ArchivesState extends State<Archives> {
               padding: const EdgeInsets.all(15.0),
               child: TextField(
                 onChanged: (value) {
-                  setState(() {
-                    if (value == '') {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const Archives()));
-                    }
-                  });
+                  if (value == '') {
+                    Get.to(() => Archives());
+                  }
                 },
                 controller: teSeach,
                 decoration: InputDecoration(
                     hintText: 'Search...',
                     labelText: 'Search',
                     prefixIcon: TextButton(
-                        onPressed: () async {
+                        onPressed: () {
                           FocusScope.of(context).unfocus();
-                          await filter(teSeach.text);
+                          archivecontroller.filter(teSeach.text);
                         },
                         child: const Icon(Icons.search)),
                     border: const OutlineInputBorder(
@@ -86,73 +103,72 @@ class _ArchivesState extends State<Archives> {
                     )),
               ),
             ),
-            ListView.builder(
-              itemCount: users.length,
-              shrinkWrap: true,
-              itemBuilder: (context, i) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  // height: 150,
-                  child: Card(
-                    elevation: 9,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                    ),
-                    child: ListTile(
-                      dense: false,
-                      title: Text(
-                        "${users[i]['id']}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+            Obx(
+              () => ListView.builder(
+                itemCount: archivecontroller.users.length,
+                shrinkWrap: true,
+                itemBuilder: (context, i) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    // height: 150,
+                    child: Card(
+                      elevation: 9,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
-                      subtitle: Column(children: [
-                        Text(
-                          "${users[i]['username']}",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                      child: ListTile(
+                        dense: false,
+                        leading: Image.file(
+                          File('${archivecontroller.users[i]['photo']}'),
                         ),
-                        Text(
-                          "${users[i]['email']}",
+                        title: Text(
+                          "${archivecontroller.users[i]['id']}",
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
-                      ]),
-                      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                        IconButton(
-                            onPressed: () async {
-                              int response = await sqldb.deletData(
-                                  "DELETE FROM users WHERE id=${users[i]['id']}");
-                              if (response > 0) {
-                                // ignore: use_build_context_synchronously
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Archives()));
-                              }
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            )),
-                        IconButton(
-                            onPressed: () async {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => Edit(
-                                        id: users[i]['id'],
-                                        username: users[i]['username'],
-                                        email: users[i]['email'],
-                                        pass: users[i]['pass'],
-                                      )));
-                            },
-                            icon: const Icon(
-                              Icons.update,
-                              color: Colors.black,
-                            )),
-                      ]),
+                        subtitle: Column(children: [
+                          Text(
+                            "${archivecontroller.users[i]['username']}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "${archivecontroller.users[i]['email']}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                        ]),
+                        trailing:
+                            Row(mainAxisSize: MainAxisSize.min, children: [
+                          IconButton(
+                              onPressed: () async {
+                                await archivecontroller.deleteuser(
+                                    archivecontroller.users[i]['id']);
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              )),
+                          IconButton(
+                              onPressed: () async {
+                                Get.to(Editarchive(), arguments: {
+                                  "id": archivecontroller.users[i]['id'],
+                                  "username": archivecontroller.users[i]['username'],
+                                  "email": archivecontroller.users[i]['email'],
+                                  "pass": archivecontroller.users[i]['pass'],
+                                  "photo": archivecontroller.users[i]['photo'],
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.update,
+                                color: Colors.black,
+                              )),
+                        ]),
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
             // Add your other widgets here if needed
           ],

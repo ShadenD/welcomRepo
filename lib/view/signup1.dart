@@ -1,33 +1,22 @@
-// ignore_for_file: must_be_immutable
-
+// ignore_for_file: must_be_immutable, avoid_print
 import 'dart:io';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:welcom/controller/archivecontroller.dart';
 import 'package:welcom/controller/signupcontroller.dart';
 import 'package:welcom/view/login2.dart';
 import 'package:welcom/model/sqlitedb2.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends GetView<SignupPageController> {
   SignupPage({super.key});
-  TextEditingController textEditingController = TextEditingController();
-  TextEditingController userEditingController = TextEditingController();
-  TextEditingController passEditingController = TextEditingController();
   SignupPageController controller3 = Get.put(SignupPageController());
+  ArchiveController controller2 = Get.put(ArchiveController());
 
   SqlDB sqldb = SqlDB();
-
-  bool isEmailCorrect = false;
-  bool passToggle = true;
-  final TextEditingController controller = TextEditingController();
-  TextEditingController confirmpassword = TextEditingController();
-  bool success = false;
-  late String vall;
-  GlobalKey<FormState> formstate = GlobalKey();
-
+  String? vall;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +69,7 @@ class SignupPage extends StatelessWidget {
               //   height: 40,
               // ),
               Form(
-                key: formstate,
+                key: controller3.formstate,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -141,31 +130,34 @@ class SignupPage extends StatelessWidget {
                     ),
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
+                        child: GetBuilder<SignupPageController>(
+                          builder: (c) => TextFormField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
+                              border: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
+                            ),
+                            controller: controller3.textEditingController,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              //  controller3.validemail(value);
+                              vall = value!;
+                              if (value.isEmpty) {
+                                return "الحقل فارغ";
+                              } else if (RegExp(
+                                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                  .hasMatch(value)) {
+                              } else {
+                                return "Enter valid Email";
+                              }
+                              return null;
+                            },
                           ),
-                          controller: textEditingController,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            vall = value!;
-                            if (value.isEmpty) {
-                              return "الحقل فارغ";
-                            } else if (RegExp(
-                                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                                .hasMatch(value)) {
-                            } else {
-                              return "Enter valid Email";
-                            }
-                            return null;
-                          },
                         )),
                     const SizedBox(
                       height: 10,
@@ -197,7 +189,7 @@ class SignupPage extends StatelessWidget {
                                 borderSide:
                                     BorderSide(color: Colors.grey.shade400)),
                           ),
-                          controller: userEditingController,
+                          controller: controller3.userEditingController,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             vall = value!;
@@ -253,12 +245,13 @@ class SignupPage extends StatelessWidget {
                                   borderSide:
                                       BorderSide(color: Colors.grey.shade400)),
                             ),
-                            controller: passEditingController,
+                            controller: controller3.passEditingController,
                             keyboardType: TextInputType.visiblePassword,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Enter your passward";
-                              } else if (passEditingController.text.length <
+                              } else if (controller3
+                                      .passEditingController.text.length <
                                   6) {
                                 return "Passward length should be more than 6 characters ";
                               }
@@ -312,15 +305,15 @@ class SignupPage extends StatelessWidget {
                                   borderSide:
                                       BorderSide(color: Colors.grey.shade400)),
                             ),
-                            controller: confirmpassword,
+                            controller: controller3.confirmpassword,
                             keyboardType: TextInputType.visiblePassword,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please re-enter password';
                               }
 
-                              if (passEditingController.text !=
-                                  confirmpassword.text) {
+                              if (controller3.passEditingController.text !=
+                                  controller3.confirmpassword.text) {
                                 return "Password does not match";
                               }
 
@@ -334,7 +327,7 @@ class SignupPage extends StatelessWidget {
                     GetBuilder<SignupPageController>(
                       builder: (c) => FlutterPwValidator(
                         defaultColor: Colors.black,
-                        controller: passEditingController,
+                        controller: controller3.passEditingController,
                         successColor: Colors.green.shade700,
                         minLength: 8,
                         uppercaseCharCount: 1,
@@ -373,16 +366,17 @@ class SignupPage extends StatelessWidget {
                       minWidth: double.infinity,
                       height: 60,
                       onPressed: () async {
-                        if (formstate.currentState!.validate()) {
-                          var response = await sqldb.insertData(
-                              "INSERT INTO 'users' ('username','email','pass','bod') VALUES('${userEditingController.text}','${textEditingController.text}','${passEditingController.text}','30-11-2001')");
-                          // ignore: avoid_print
-                          print(response);
-                          // ignore: avoid_print
+                        if (controller3.formstate.currentState!.validate()) {
+                          await controller2.inseretuser({
+                            'username': controller3.userEditingController.text,
+                            'email': controller3.textEditingController.text,
+                            'pass': controller3.passEditingController.text,
+                            'photo': controller3.selectedImagePath.value,
+                          });
                           print("Data filled successfully");
-                          textEditingController.clear();
-                          passEditingController.clear();
-                          confirmpassword.clear();
+                          controller3.textEditingController.clear();
+                          controller3.passEditingController.clear();
+                          controller3.confirmpassword.clear();
                         }
                       },
                       color: Colors.greenAccent,

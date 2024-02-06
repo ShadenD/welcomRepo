@@ -1,23 +1,24 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, annotate_overrides
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welcom/controller/logincontroller.dart';
+import 'package:welcom/controller/remember_me_controller.dart';
 import 'package:welcom/main.dart';
 import 'package:welcom/view/archivePage.dart';
-import 'package:welcom/controller/remember_me_controller.dart';
 import 'package:welcom/view/home.dart';
 import 'package:welcom/view/signup1.dart';
 import 'package:welcom/model/sqlitedb2.dart';
 
-class Loginpage2 extends StatelessWidget {
+class Loginpage2 extends GetView<LoginPageController> {
   Loginpage2({super.key});
   TextEditingController textEditingController = TextEditingController();
   TextEditingController passEditingController = TextEditingController();
   bool isEmailCorrect = false;
   bool passToggle = true;
-  RememberMeController controller = Get.put(RememberMeController());
   LoginPageController controller2 = Get.put(LoginPageController());
+  RememberMeController controllerr = Get.put(RememberMeController());
+
   SqlDB sqldb = SqlDB();
   bool rem = false;
 
@@ -25,6 +26,10 @@ class Loginpage2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // textEditingController.text =
+    //     sharedPreferences!.getString('email').toString();
+    // textEditingController.text =
+    //     sharedPreferences!.getString('pass').toString();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -208,15 +213,14 @@ class Loginpage2 extends StatelessWidget {
                           width: 30,
                           child: Obx(
                             () => Checkbox(
-                              value: controller.rememberMe.value,
+                              value: controllerr.rememberMe.value,
                               onChanged: (value) async {
-                                controller.toggleRememberMe(value!);
+                                controllerr.toggleRememberMe(value!);
                                 if (value) {
                                   sharedPreferences!.setString(
                                       'email', textEditingController.text);
                                   sharedPreferences!.setString(
                                       'pass', passEditingController.text);
-                                  controller2.remember();
                                 }
                               },
                             ),
@@ -262,7 +266,7 @@ class Loginpage2 extends StatelessWidget {
                                       'User with the provided email does not exist!');
                                 } else {
                                   // ignore: use_build_context_synchronously
-                                  Get.to(() => const Archives());
+                                  Get.to(() => Archives());
                                 }
                               }
                             },

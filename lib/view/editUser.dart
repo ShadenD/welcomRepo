@@ -1,70 +1,29 @@
-// ignore_for_file: file_names, use_build_context_synchronously
+// ignore_for_file: file_names, use_build_context_synchronously, must_be_immutable, unrelated_type_equality_checks
 
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
+import 'package:get/get.dart';
+import 'package:welcom/controller/archivecontroller.dart';
 import 'package:welcom/view/archivePage.dart';
 import 'package:welcom/model/sqlitedb2.dart';
 
-class Edit extends StatefulWidget {
-  final int id;
-  final String username;
-  final String email;
-  final String pass;
-  const Edit(
-      {super.key,
-      required this.id,
-      required this.username,
-      required this.email,
-      required this.pass});
+class Editarchive extends GetView<ArchiveController> {
+  Editarchive({super.key});
+  SqlDB sqldb = SqlDB();
+  GlobalKey<FormState> formstate = GlobalKey();
 
-  @override
-  State<Edit> createState() => _SignupPage();
-}
-
-class _SignupPage extends State<Edit> {
   TextEditingController textEditingController = TextEditingController();
   TextEditingController userEditingController = TextEditingController();
-
-  TextEditingController passEditingController = TextEditingController();
-  bool isEmailCorrect = false;
-  bool passToggle = true;
-//  final bool _isPasswordEightCharacters = false;
-  // final bool _hasPasswordOneNumber = false;
-  final TextEditingController controller = TextEditingController();
-  bool success = false;
-  late String vall;
-
   TextEditingController confirmpassword = TextEditingController();
-  GlobalKey<FormState> formstate = GlobalKey();
-  onPasswordChanged(String password) {
-    final numericRegex = RegExp(r'[0-9]');
-
-    setState(() {
-      if (password.length >= 8) {}
-
-      if (numericRegex.hasMatch(password)) {}
-    });
-  }
-
-  SqlDB sqldb = SqlDB();
-
-  Future<List<Map>> readData() async {
-    List<Map> response = await sqldb.readData("SELECT * FROM users");
-    return response;
-  }
-
-  @override
-  void initState() {
-    textEditingController.text = widget.email;
-    userEditingController.text = widget.username;
-    passEditingController.text = widget.pass;
-
-    super.initState();
-  }
+  TextEditingController passEditingController = TextEditingController();
+  ArchiveController archiveController = Get.put(ArchiveController());
 
   @override
   Widget build(BuildContext context) {
+    textEditingController.text = Get.arguments['email'];
+    userEditingController.text = Get.arguments['username'];
+    passEditingController.text = Get.arguments['pass'];
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
@@ -144,7 +103,7 @@ class _SignupPage extends State<Edit> {
                           controller: textEditingController,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
-                            vall = value!;
+                            archiveController.vall = value!;
                             if (value.isEmpty) {
                               return "الحقل فارغ";
                             } else if (RegExp(
@@ -189,7 +148,7 @@ class _SignupPage extends State<Edit> {
                           controller: userEditingController,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
-                            vall = value!;
+                            archiveController.vall = value!;
                             if (value.isEmpty) {
                               return "الحقل فارغ";
                             }
@@ -216,17 +175,17 @@ class _SignupPage extends State<Edit> {
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
                         child: TextFormField(
-                          onChanged: (password) => onPasswordChanged(password),
-                          obscureText: passToggle,
+                          onChanged: (password) =>
+                              archiveController.onPasswordChanged(password),
+                          obscureText: archiveController.passToggle,
                           decoration: InputDecoration(
                             suffix: InkWell(
                               onTap: () {
-                                setState(() {
-                                  passToggle = !passToggle;
-                                });
+                                archiveController.passToggle =
+                                    !archiveController.passToggle;
                               },
                               child: Icon(
-                                passToggle
+                                archiveController.passToggle
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                                 color: Colors.grey,
@@ -246,8 +205,10 @@ class _SignupPage extends State<Edit> {
                           validator: (value) {
                             if (value!.isEmpty) {
                               return "Enter your passward";
-                            } else if (passEditingController.text.length < 6) {
-                              return "Passward length should be more than 6 characters ";
+                              // } else if (controller4
+                              //         .passEditingController.text.length <
+                              //     6) {
+                              //   return "Passward length should be more than 6 characters ";
                             }
                             return null;
                           },
@@ -272,17 +233,17 @@ class _SignupPage extends State<Edit> {
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
                         child: TextFormField(
-                          onChanged: (password) => onPasswordChanged(password),
-                          obscureText: passToggle,
+                          onChanged: (password) =>
+                              archiveController.onPasswordChanged(password),
+                          obscureText: archiveController.passToggle,
                           decoration: InputDecoration(
                             suffix: InkWell(
                               onTap: () {
-                                setState(() {
-                                  passToggle = !passToggle;
-                                });
+                                archiveController.passToggle =
+                                    !archiveController.passToggle;
                               },
                               child: Icon(
-                                passToggle
+                                archiveController.passToggle
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                                 color: Colors.grey,
@@ -304,8 +265,8 @@ class _SignupPage extends State<Edit> {
                               return 'Please re-enter password';
                             }
 
-                            if (passEditingController.text !=
-                                confirmpassword.text) {
+                            if (archiveController.passEditingController.text !=
+                                archiveController.confirmpassword.text) {
                               return "Password does not match";
                             }
 
@@ -317,7 +278,7 @@ class _SignupPage extends State<Edit> {
                     ),
                     FlutterPwValidator(
                       defaultColor: Colors.black,
-                      controller: controller,
+                      controller: archiveController.controller,
                       successColor: Colors.green.shade700,
                       minLength: 8,
                       uppercaseCharCount: 1,
@@ -327,14 +288,10 @@ class _SignupPage extends State<Edit> {
                       width: 350,
                       height: 150,
                       onSuccess: () {
-                        setState(() {
-                          success = true;
-                        });
+                        archiveController.success;
                       },
                       onFail: () {
-                        setState(() {
-                          success = false;
-                        });
+                        archiveController.fail;
                       },
                     ),
                     const SizedBox(
@@ -360,16 +317,13 @@ class _SignupPage extends State<Edit> {
                       height: 60,
                       onPressed: () async {
                         if (formstate.currentState!.validate()) {
-                          int respons = await sqldb.updateData(
-                              ''' UPDATE users SET username= "${userEditingController.text}" ,
-                              email= "${textEditingController.text}" ,
-                               pass= "${passEditingController.text}"
-                              WHERE id=${widget.id}
-                               ''');
-                          if (respons > 0) {
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => const Archives()));
+                          int res = await archiveController.uppdateuser({
+                            "email": textEditingController.text,
+                            "username": userEditingController.text,
+                            "pass": passEditingController.text,
+                          });
+                          if (res > 0) {
+                            Get.to(() => Archives());
                           }
                         }
                       },

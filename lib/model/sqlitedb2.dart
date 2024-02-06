@@ -45,7 +45,8 @@ CREATE TABLE "users"(
 "username" TEXT NOT NULL,
 "email" TEXT NOT NULL,
 "pass" TEXT NOT NULL,
-"bod" TEXT NOT NULL
+"bod" TEXT NOT NULL,
+"photo" TEXT NOT NULL
 
 
 )

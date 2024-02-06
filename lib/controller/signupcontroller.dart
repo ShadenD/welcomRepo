@@ -8,13 +8,17 @@ import 'package:welcom/model/sqlitedb2.dart';
 class SignupPageController extends GetxController {
   SqlDB sqldb = SqlDB();
   TextEditingController textEditingController = TextEditingController();
+  TextEditingController userEditingController = TextEditingController();
   TextEditingController passEditingController = TextEditingController();
+  TextEditingController confirmpassword = TextEditingController();
+  GlobalKey<FormState> formstate = GlobalKey();
+
   RxBool passToggle = true.obs;
   bool succ = true;
   bool fail = false;
+
   var selectedImagePath = ''.obs;
   var selectedImageSize = ''.obs;
-
   void pickImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
@@ -30,21 +34,18 @@ class SignupPageController extends GetxController {
           colorText: Colors.white);
     }
   }
-  // onPasswordChanged(String password) {
-  //   final numericRegex = RegExp(r'[0-9]');
-
-  //   if (password.length >= 8) {
-  //     print("Strong passward");
-  //     const Text("Strong password");
-  //   }
-
-  //   if (numericRegex.hasMatch(password)) {}
-  // }
 
   Future<List<Map>> readData() async {
     List<Map> response = await sqldb.readData("SELECT * FROM users");
     return response;
   }
+
+  // inseretuser(Map insertuser) async {
+  //   await sqldb.insertData(
+  //       "INSERT INTO 'users' ('username','email','pass','bod','photo') VALUES('${insertuser['username']}','${insertuser['email']}','${insertuser['pass']}','20-1-2000','${insertuser['photo']}')");
+  
+  //     users  
+  // }
 
   @override
   void onInit() {
