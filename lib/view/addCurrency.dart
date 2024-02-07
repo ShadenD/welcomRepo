@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, avoid_print, file_names
+// ignore_for_file: must_be_immutable, avoid_print, file_names, unnecessary_string_interpolations
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -50,6 +50,7 @@ class AddCurr extends GetView<CurrencyController> {
           const SizedBox(
             height: 20,
           ),
+
           TextFormField(
             controller: controllerRate,
             keyboardType: TextInputType.number,
@@ -70,12 +71,12 @@ class AddCurr extends GetView<CurrencyController> {
               minWidth: double.infinity,
               height: 60,
               onPressed: () async {
-               await controllerCurr.insertcurr({
+                await controllerCurr.insertcurr({
                   'namecurr': controllerCurrName.text,
                   'currsymbol': controllerCurrSymbol.text,
                   'rate': controllerRate.text,
                 });
-                print('add to currency');
+                //print('${controllerCurrName.text}');
                 Get.offNamed('/currency');
               },
               color: Colors.greenAccent,
@@ -88,6 +89,13 @@ class AddCurr extends GetView<CurrencyController> {
               ),
             ),
           ),
+          // ListView.builder(
+          //     itemCount: controllerCurr.currency.length,
+          //     shrinkWrap: true,
+          //     itemBuilder: (context, index) {
+          //       return Text("${controllerCurr.currency[index]['curreny_id']}");
+          //     })
+          // Text("${controllerCurr.currency[i]['curreny_name']}"),
         ]),
       ),
     );

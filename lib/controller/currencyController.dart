@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, unused_local_variable
+// ignore_for_file: file_names, unused_local_variable, avoid_print
 
 import 'package:get/get.dart';
 import 'package:welcom/model/sqlitedb2.dart';
@@ -22,7 +22,7 @@ class CurrencyController extends GetxController {
   delete(int id) async {
     int response =
         await sqldb.deletData("DELETE FROM currency WHERE currency_id=$id");
-    currency.removeWhere((element) => element['id'] == id);
+    currency.removeWhere((element) => element['currency_id'] == id);
     if (response > 0) {
       Get.to(() => Currency());
     }
@@ -30,19 +30,17 @@ class CurrencyController extends GetxController {
 
   filter(String val) {
     Iterable filterCurr = currency.where(
-        (element) => element['currency_id'] == val || element['rate'] == val);
+        (element) => element['curreny_name'] == val || element['rate'] == val);
     currency.replaceRange(0, currency.length, filterCurr.toList());
   }
 
-  updateCurreny(Map update) async {
-    await sqldb.updateData(
-        ''' UPDATE curreny SET curreny_name= "${update['currency_name']}" ,
-                              currency_symbol= "${update['currency_symbol']}" ,
-                               rate= "${update['rate']}"
-                              WHERE id= ${Get.arguments['id']} ''');
-                            
-                        
-  }
+  // updateCurreny(Map update) async {
+  //   await sqldb.updateData(
+  //       ''' UPDATE curreny SET curreny_name= "${update['currency_name']}" ,
+  //                             currency_symbol= "${update['currency_symbol']}" ,
+  //                              rate= "${update['rate']}"
+  //                             WHERE currency_id= ${Get.arguments['id']} ''');
+  // }
 
   @override
   void onInit() {

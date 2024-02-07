@@ -131,18 +131,18 @@ class Currency extends GetView<CurrencyController> {
                             dense: false,
                             leading: Iconify(
                                 '${controllerCurrency.currency[i]['currency_symbol']}'),
-                            title: Text(
-                              "${controllerCurrency.currency[i]['currency_name']}",
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
-                            subtitle: Column(children: [
+                            title: Column(children: [
                               Text(
                                 "${controllerCurrency.currency[i]['rate']}",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                             ]),
+                            subtitle: Text(
+                              "${controllerCurrency.currency[i]['curreny_name']}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
                             trailing:
                                 Row(mainAxisSize: MainAxisSize.min, children: [
                               IconButton(
@@ -159,9 +159,14 @@ class Currency extends GetView<CurrencyController> {
                               IconButton(
                                   onPressed: () async {
                                     Get.to(EditCurr(), arguments: {
-                                      'currency_name':controllerCurrency.currency[i] ['currency_name'],
-                                      'currency_symbol': controllerCurrency.currency[i] ['currency_symbol'],
-                                      'rate': controllerCurrency.currency[i]['rate'],
+                                      'id': controllerCurrency.currency[i]
+                                          ['currency_id'],
+                                      'currency_name': controllerCurrency
+                                          .currency[i]['currency_name'],
+                                      'currency_symbol': controllerCurrency
+                                          .currency[i]['currency_symbol'],
+                                      'rate': controllerCurrency.currency[i]
+                                          ['rate'],
                                     });
                                   },
                                   icon: const Icon(

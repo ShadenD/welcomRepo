@@ -109,6 +109,29 @@ CREATE TABLE "currency"(
     String path = join(databasepath, 'shaden2.db');
     await deleteDatabase(path);
   }
+   updateOrderState(String sql) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawUpdate(sql);
+    return response;
+  }
+    readJoin(String sql) async {
+    Database? mydb = await db;
+    List response = await mydb!.rawQuery(sql);
+    return response;
+  }
+  
+  delete(String table, String where) async {
+    Database? mydb = await db;
+    int response = await mydb!.delete(table, where: where);
+    return response;
+  }
+    insert(String table, Map<String, dynamic> user) async {
+    Database? mydb = await db;
+    int response = await mydb!.insert(table, user);
+    return response;
+  }
+
+
 }
  
 // int: لانهم برجعوا كم سطر نحذف او كم سطر تم اضافته ووووو

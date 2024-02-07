@@ -161,11 +161,11 @@ class EditCurr extends StatelessWidget {
             minWidth: double.infinity,
             height: 60,
             onPressed: () async {
-              await currencyController.updateCurreny({
-                'currency_name': currname.text,
-                'currency_symbol': currsymbol.text,
-                'rate': currrate.text,
-              });
+              // await currencyController.updateCurreny({
+              //   'currency_name': currname.text,
+              //   'currency_symbol': currsymbol.text,
+              //   'rate': currrate.text,
+              // });
             },
             color: Colors.greenAccent,
             elevation: 0,

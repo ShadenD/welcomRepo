@@ -5,6 +5,7 @@ import 'package:welcom/middleware/auth_middleware.dart';
 import 'package:welcom/view/CurrencyPage.dart';
 import 'package:welcom/view/OrderPage.dart';
 import 'package:welcom/view/addCurrency.dart';
+import 'package:welcom/view/addorder.dart';
 import 'package:welcom/view/archivePage.dart';
 import 'package:welcom/view/editUser.dart';
 import 'package:welcom/view/home.dart';
@@ -32,6 +33,7 @@ void main() async {
       GetPage(name: "/addcurr", page: () => AddCurr()),
       GetPage(name: "/archive", page: () => Archives()),
       GetPage(name: "/order", page: () => Orders()),
+      GetPage(name: "/orderAdd", page: () => Add()),
     ],
   ));
 }
