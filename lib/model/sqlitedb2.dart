@@ -68,7 +68,7 @@ FOREIGN KEY (user_id) REFERENCES users(id)
     ''');
     await db.execute('''
 CREATE TABLE "currency"(
-"currency_id" INTEGER  PRIMARY KEY AUTOINCREMENT,
+"currency_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 "curreny_name" TEXT NOT NULL,
 "currency_symbol" TEXT NOT NULL,
 "rate" REAL NOT NULL
@@ -109,29 +109,30 @@ CREATE TABLE "currency"(
     String path = join(databasepath, 'shaden2.db');
     await deleteDatabase(path);
   }
-   updateOrderState(String sql) async {
+
+  updateOrderState(String sql) async {
     Database? mydb = await db;
     int response = await mydb!.rawUpdate(sql);
     return response;
   }
-    readJoin(String sql) async {
+
+  readJoin(String sql) async {
     Database? mydb = await db;
     List response = await mydb!.rawQuery(sql);
     return response;
   }
-  
+
   delete(String table, String where) async {
     Database? mydb = await db;
     int response = await mydb!.delete(table, where: where);
     return response;
   }
-    insert(String table, Map<String, dynamic> user) async {
+
+  insert(String table, Map<String, dynamic> user) async {
     Database? mydb = await db;
     int response = await mydb!.insert(table, user);
     return response;
   }
-
-
 }
  
 // int: لانهم برجعوا كم سطر نحذف او كم سطر تم اضافته ووووو

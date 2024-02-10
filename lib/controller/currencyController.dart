@@ -8,16 +8,21 @@ class CurrencyController extends GetxController {
   SqlDB sqldb = SqlDB();
   RxList currency = [].obs;
 
+  insert(String table, Map<String, String> currency) async {
+    int response = await sqldb.insert(table, currency);
+    return response;
+  }
+
   readData2() async {
     List<Map> response = await sqldb.readData("SELECT * FROM currency");
     currency.addAll(response);
   }
 
-  insertcurr(Map curr) async {
-    await sqldb.insertData(
-        "INSERT INTO 'currency' ('curreny_name','currency_symbol','rate') VALUES('${curr['namecurr']}','${curr['currsymbol']}',${curr['rate']})");
-    currency.add(curr);
-  }
+  // insertcurr(Map curr) async {
+  //   await sqldb.insertData(
+  //       "INSERT INTO 'currency' ('curreny_name','currency_symbol','rate') VALUES('${curr['namecurr']}','${curr['currsymbol']}',${curr['rate']})");
+  //   currency.add(curr);
+  // }
 
   delete(int id) async {
     int response =

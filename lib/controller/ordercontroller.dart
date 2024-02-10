@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:get/get.dart';
 import 'package:welcom/model/sqlitedb2.dart';
 
@@ -35,14 +37,14 @@ class OrederController extends GetxController {
 
   getAllPaid() {
     states.clear();
-    Iterable filterdUsers = orders.where((element) => element['state'] == 1);
+    Iterable filterdUsers = orders.where((element) => element['status'] == 1);
     orders.replaceRange(0, orders.length, filterdUsers.toList());
     addStates();
   }
 
   getAllNotPaid() {
     states.clear();
-    Iterable filterdUsers = orders.where((element) => element['state'] == 0);
+    Iterable filterdUsers = orders.where((element) => element['status'] == 0);
     orders.replaceRange(0, orders.length, filterdUsers.toList());
     addStates();
   }
@@ -83,21 +85,21 @@ class OrederController extends GetxController {
     return stateKeyword.value;
   }
 
-  getOrders() async {
+  readDataOrder() async {
     List response = await sqldb.readJoin('''
     SELECT users.username AS username, currency.curreny_name AS currencyName, 
     orders.order_date, orders.status AS status, orders.order_amount AS amount,
     orders.type AS type, orders.equal_order_amount AS equalAmount, orders.order_id AS order_Id
     FROM orders JOIN users 
     ON users.id=orders.order_id JOIN currency 
-    ON currency.currency_id=orders.currency_id
+    ON currency.currency_id=orders.curr_id
 ''');
     orders.addAll(response);
     addStates();
   }
 
   addStates() {
-    Iterable orderStates = orders.map((order) => order['status']);
+    Iterable orderStates = orders.map((element) => element['status']);
     states.addAll(orderStates);
   }
 
@@ -112,18 +114,22 @@ class OrederController extends GetxController {
     states[index] = value ? 1 : 0;
   }
 
-  insertorder(Map ord) async {
-    int resp = await sqldb.insertData(
-      "INSERT INTO 'orders' ('order_date','order_amount','equal_order_amount','curr_id','status','type','user_id') VALUES('${ord['orderDate']}',${ord['orderAmmount']},${ord['equalOrderAmmount']},${ord['currencyId']},${ord['status']},'${ord['type']})',${ord['userId']}");
-    return resp;
+  insert(String table, Map<String, dynamic> order) async {
+    int response = await sqldb.insert(table, order);
+    return response;
   }
-  
-
 
   delete(String table, int id) async {
     int response = await sqldb.delete(table, "order_id=$id");
     if (response > 0) {
       orders.removeWhere((order) => order!['order_Id'] == id);
     }
+  }
+
+  @override
+  void onInit() {
+    print(orders);
+    readDataOrder();
+    super.onInit();
   }
 }

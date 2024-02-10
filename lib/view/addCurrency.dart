@@ -71,11 +71,12 @@ class AddCurr extends GetView<CurrencyController> {
               minWidth: double.infinity,
               height: 60,
               onPressed: () async {
-                await controllerCurr.insertcurr({
-                  'namecurr': controllerCurrName.text,
-                  'currsymbol': controllerCurrSymbol.text,
+                Map<String, String> currency = {
+                  'curreny_name': controllerCurrName.text,
+                  'currency_symbol': controllerCurrSymbol.text,
                   'rate': controllerRate.text,
-                });
+                };
+                await controllerCurr.insert('currency', currency);
                 //print('${controllerCurrName.text}');
                 Get.offNamed('/currency');
               },

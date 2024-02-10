@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, non_constant_identifier_names, avoid_types_as_parameter_names
+// ignore_for_file: must_be_immutable, non_constant_identifier_names, avoid_types_as_parameter_names, avoid_print
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +8,7 @@ import 'package:welcom/controller/dropdowncontroller.dart';
 import 'package:welcom/controller/ordercontroller.dart';
 import 'package:welcom/view/OrderPage.dart';
 
-class Add extends GetView {
+class Add extends GetView<OrederController> {
   Add({super.key});
   TextEditingController datecontroller = TextEditingController();
   TextEditingController amountcontroller = TextEditingController();
@@ -255,18 +255,18 @@ class Add extends GetView {
                 ElevatedButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      Map<String, dynamic> order = {
+                      Map<String, dynamic> order1 = {
+                        "order_date": datecontroller.text,
+                        "order_amount": amountcontroller.text,
+                        "equal_order_amount": equalamountcontroller.text,
                         "curr_id": ordercontroller.currencyId.value,
-                        "userId": ordercontroller.userId.value,
-                        "orderDate": datecontroller.text,
-                        "orderAmmount": amountcontroller.text,
-                        "equalOrderAmmount": equalamountcontroller.text,
                         "status": ordercontroller.isChecked.value ? 1 : 0,
                         "type": ordercontroller.item.value,
+                        "user_id": ordercontroller.userId.value,
                       };
-
-                      await ordercontroller.insertorder(order);
-                      Get.off(Orders());
+                      await ordercontroller.insert('orders', order1);
+                      // await ordercontroller.insertorder(order);
+                      Get.to(Orders());
                     }
                   },
                   child: const Text('ADD ORDER'),

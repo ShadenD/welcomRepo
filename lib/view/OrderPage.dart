@@ -109,7 +109,7 @@ class Orders extends GetView<OrederController> {
                                   if (fitercontroller.text == '') {
                                     controller.states.clear();
                                     controller.orders.clear();
-                                    controller.getOrders();
+                                    controller.readDataOrder();
                                   }
                                 },
                                 child: const Icon(Icons.search)),
@@ -121,7 +121,7 @@ class Orders extends GetView<OrederController> {
                           if (value == '') {
                             orederController.states.clear();
                             orederController.orders.clear();
-                            orederController.getOrders();
+                            orederController. readDataOrder()();
                           }
                         },
                       ),
@@ -129,8 +129,8 @@ class Orders extends GetView<OrederController> {
                   ],
                 ),
               ),
-              Obx(
-                () => Expanded(
+              GetX<OrederController>(
+                builder: (OrederController orederController) => Expanded(
                   child: ListView.builder(
                     itemCount: orederController.orders.length,
                     itemBuilder: (context, i) {
@@ -140,21 +140,20 @@ class Orders extends GetView<OrederController> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    "User: ${controller.orders[i]['username']}"),
+                                    " ${orederController.orders[i]['username']}"),
                                 Text(
-                                    "Order Date: ${controller.orders[i]['order_date']}"),
+                                    " ${orederController.orders[i]['order_date']}"),
                                 Obx(
                                   () => Text(
-                                      "Paid: ${orederController.states[i] == 1 ? "Paid" : orederController.states[i] == 0 ? "Not Paid" : null}"),
+                                      " ${orederController.states[i] == 1 ? "Paid" : orederController.states[i] == 0 ? "Not Paid" : null}"),
                                 ),
+                                Text(" ${orederController.orders[i]['type']}"),
                                 Text(
-                                    "Order Type: ${controller.orders[i]['type']}"),
+                                    " ${orederController.orders[i]['amount']}"),
                                 Text(
-                                    "Order Amount: ${controller.orders[i]['amount']}"),
+                                    " ${orederController.orders[i]['equalAmount']}"),
                                 Text(
-                                    "Order Equal Amount: ${controller.orders[i]['equalAmount']}"),
-                                Text(
-                                    "Currency: ${controller.orders[i]['currencyName']}"),
+                                    " ${orederController.orders[i]['currencyName']}"),
                               ],
                             ),
                             trailing: Row(
@@ -181,7 +180,7 @@ class Orders extends GetView<OrederController> {
                                       orederController.switchOrderState(
                                           i, value);
                                       orederController.orders.clear();
-                                      orederController.getOrders();
+                                      orederController.readDataOrder();
                                     },
                                   ),
                                 ),

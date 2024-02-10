@@ -96,7 +96,8 @@ class Currency extends GetView<CurrencyController> {
               child: TextFormField(
                 onChanged: (value) {
                   if (value == '') {
-                    Get.to(() => Currency());
+                    controllerCurrency.readData2();
+                    //Get.to(() => Currency());
                   }
                 },
                 controller: teSeach1,
