@@ -1,12 +1,16 @@
 // ignore_for_file: file_names, use_build_context_synchronously, must_be_immutable, unrelated_type_equality_checks
 
+import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:welcom/controller/archivecontroller.dart';
-import 'package:welcom/view/archivePage.dart';
+import 'package:welcom/controller/signupcontroller.dart';
 import 'package:welcom/model/sqlitedb2.dart';
+import 'package:welcom/view/archivePage.dart';
 
 class Editarchive extends GetView<ArchiveController> {
   Editarchive({super.key});
@@ -18,6 +22,7 @@ class Editarchive extends GetView<ArchiveController> {
   TextEditingController confirmpassword = TextEditingController();
   TextEditingController passEditingController = TextEditingController();
   ArchiveController archiveController = Get.put(ArchiveController());
+  SignupPageController controller3 = Get.put(SignupPageController());
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +78,47 @@ class Editarchive extends GetView<ArchiveController> {
                 key: formstate,
                 child: Column(
                   children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                          width: 20,
+                        ),
+                        Obx(
+                          () => SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: controller3.selectedImagePath.value == ''
+                                  ? const Text(
+                                      "select image from camera/gallery")
+                                  : ClipOval(
+                                      child: Image.file(File(
+                                          controller3.selectedImagePath.value)),
+                                    )),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                          width: 20,
+                        ),
+                        Obx(() => Text(
+                              controller3.selectedImageSize.value == ''
+                                  ? ''
+                                  : controller3.selectedImageSize.value,
+                              style: const TextStyle(fontSize: 20),
+                            )),
+                        IconButton(
+                            onPressed: () {
+                              controller3.pickImage(ImageSource.camera);
+                            },
+                            icon: const Icon(Icons.camera_alt_outlined)),
+                        IconButton(
+                            onPressed: () {
+                              controller3.pickImage(ImageSource.gallery);
+                            },
+                            icon: const Icon(Icons.photo_album_outlined)),
+                      ],
+                    ),
                     const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -146,10 +192,10 @@ class Editarchive extends GetView<ArchiveController> {
                                     BorderSide(color: Colors.grey.shade400)),
                           ),
                           controller: userEditingController,
-                          keyboardType: TextInputType.emailAddress,
+                          // keyboardType: TextInputType.text,
                           validator: (value) {
-                            archiveController.vall = value!;
-                            if (value.isEmpty) {
+                            // archiveController.vall = value!;
+                            if (value!.isEmpty) {
                               return "الحقل فارغ";
                             }
                             return null;
@@ -175,8 +221,8 @@ class Editarchive extends GetView<ArchiveController> {
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
                         child: TextFormField(
-                          onChanged: (password) =>
-                              archiveController.onPasswordChanged(password),
+                          // onChanged: (password) =>
+                          //     archiveController.onPasswordChanged(password),
                           obscureText: archiveController.passToggle,
                           decoration: InputDecoration(
                             suffix: InkWell(
@@ -265,8 +311,8 @@ class Editarchive extends GetView<ArchiveController> {
                               return 'Please re-enter password';
                             }
 
-                            if (archiveController.passEditingController.text !=
-                                archiveController.confirmpassword.text) {
+                            if (passEditingController.text !=
+                                confirmpassword.text) {
                               return "Password does not match";
                             }
 
@@ -317,14 +363,16 @@ class Editarchive extends GetView<ArchiveController> {
                       height: 60,
                       onPressed: () async {
                         if (formstate.currentState!.validate()) {
-                          int res = await archiveController.uppdateuser({
+                          Map<String, String> user = {
                             "email": textEditingController.text,
                             "username": userEditingController.text,
                             "pass": passEditingController.text,
-                          });
-                          if (res > 0) {
-                            Get.to(() => Archives());
-                          }
+                            'photo': controller3.selectedImagePath.value,
+                          };
+
+                          await controller.updateUser(
+                              'users', user, Get.arguments['id']);
+                          Get.off(() => Archives());
                         }
                       },
                       color: Colors.blue,

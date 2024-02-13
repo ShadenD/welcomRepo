@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welcom/model/sqlitedb2.dart';
@@ -8,22 +10,20 @@ class ArchiveController extends GetxController {
   List users = [].obs;
   SqlDB sqldb = SqlDB();
   TextEditingController teSeach = TextEditingController();
-  TextEditingController textEditingController = TextEditingController();
-  TextEditingController userEditingController = TextEditingController();
-  TextEditingController passEditingController = TextEditingController();
+
   bool isEmailCorrect = false;
   bool passToggle = true;
+  RxInt selectedIndex = 0.obs;
 
   final TextEditingController controller = TextEditingController();
   bool success = true;
   bool fail = false;
   late String vall;
 
-  TextEditingController confirmpassword = TextEditingController();
-
   readData() async {
     List<Map> response = await sqldb.readData("SELECT * FROM users");
     users.addAll(response);
+    update();
   }
 
   filter(String val) {
@@ -38,18 +38,18 @@ class ArchiveController extends GetxController {
     users.add(insertuser);
   }
 
-  uppdateuser(Map updatuser) async {
-    int res = await sqldb
-        .updateData(''' UPDATE users SET username= "${updatuser['username']}" ,
-                              email= "${updatuser['email']}" ,
-                               pass= "${updatuser['pass']}"
-                              WHERE id= ${Get.arguments['id']}  ''');
-    return res;
-  }
+  // uppdateuser(Map updatuser) async {
+  // await sqldb
+  //       .updateData(''' UPDATE users SET username= "${updatuser['username']}" ,
+  //                             email= "${updatuser['email']}" ,
+  //                              pass= "${updatuser['pass']}"
+  //                             WHERE id= ${Get.arguments['id']}  ''');
+  // }
 
   @override
   void onInit() {
     super.onInit();
+
     readData();
   }
 
@@ -79,5 +79,9 @@ class ArchiveController extends GetxController {
     if (response > 0) {
       Get.to(() => Archives());
     }
+  }
+
+  updateUser(String table, Map<String, String> user, int id) async {
+    await sqldb.update(table, user, "id=$id");
   }
 }

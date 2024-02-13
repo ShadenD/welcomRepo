@@ -13,18 +13,18 @@ class OrederController extends GetxController {
   RxString stateKeyword = "".obs;
   SqlDB sqldb = SqlDB();
   RxBool isChecked = false.obs;
-  RxBool isDescSorted = false.obs;
+  RxBool sorted = false.obs;
 
   toggleCheck(value) {
     isChecked.value = value!;
   }
 
   invertSorting() {
-    isDescSorted.value = !isDescSorted.value;
+    sorted.value = !sorted.value;
   }
 
   sorting() {
-    if (isDescSorted.value) {
+    if (sorted.value) {
       states.clear();
       orders.sort((a, b) => -a['amount'].compareTo(b['amount']));
       addStates();

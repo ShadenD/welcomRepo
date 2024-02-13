@@ -133,6 +133,12 @@ CREATE TABLE "currency"(
     int response = await mydb!.insert(table, user);
     return response;
   }
+
+  update(String table, Map<String, String> user, String where) async {
+    Database? mydb = await db;
+    int response = await mydb!.update(table, user, where: where);
+    return response;
+  }
 }
  
 // int: لانهم برجعوا كم سطر نحذف او كم سطر تم اضافته ووووو

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welcom/controller/currencyController.dart';
+import 'package:welcom/view/CurrencyPage.dart';
 
 class AddCurr extends GetView<CurrencyController> {
   AddCurr({super.key});
@@ -24,6 +25,7 @@ class AddCurr extends GetView<CurrencyController> {
             controller: controllerCurrName,
             // keyboardType: TextInputType.text,
             decoration: InputDecoration(
+              labelText: 'Currency Name',
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
               enabledBorder: OutlineInputBorder(
@@ -39,6 +41,7 @@ class AddCurr extends GetView<CurrencyController> {
             controller: controllerCurrSymbol,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
+              labelText: 'Currency Symbol',
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
               enabledBorder: OutlineInputBorder(
@@ -55,6 +58,7 @@ class AddCurr extends GetView<CurrencyController> {
             controller: controllerRate,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
+              labelText: 'Currency Rate',
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
               enabledBorder: OutlineInputBorder(
@@ -76,9 +80,12 @@ class AddCurr extends GetView<CurrencyController> {
                   'currency_symbol': controllerCurrSymbol.text,
                   'rate': controllerRate.text,
                 };
-                await controllerCurr.insert('currency', currency);
+                await controller.insert('currency', currency);
+
+                // controllerCurr.currency.clear();
+                // controllerCurr.readData2();
+                Get.off(() => Currency());
                 //print('${controllerCurrName.text}');
-                Get.offNamed('/currency');
               },
               color: Colors.greenAccent,
               elevation: 0,

@@ -1,15 +1,9 @@
 import 'package:get/get.dart';
 
-class DrawerController1 extends GetxController {
-  void usersOpen() {
-    Get.toNamed('/archive');
-  }
+class NavigationController extends GetxController {
+  var selectedIndex = 0.obs;
 
-  void currencyOpen() {
-    Get.toNamed('/currency');
-  }
-
-  void orederOpen() {
-    Get.toNamed('/order');
+  void updateSelectedIndex(int index) {
+    selectedIndex.value = index;
   }
 }

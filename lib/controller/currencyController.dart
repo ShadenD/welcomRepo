@@ -10,11 +10,13 @@ class CurrencyController extends GetxController {
 
   insert(String table, Map<String, String> currency) async {
     int response = await sqldb.insert(table, currency);
+
     return response;
   }
 
   readData2() async {
     List<Map> response = await sqldb.readData("SELECT * FROM currency");
+
     currency.addAll(response);
   }
 
@@ -37,6 +39,13 @@ class CurrencyController extends GetxController {
     Iterable filterCurr = currency.where(
         (element) => element['curreny_name'] == val || element['rate'] == val);
     currency.replaceRange(0, currency.length, filterCurr.toList());
+  }
+
+  updateCurrency(String table, Map<String, String> currency, int id) async {
+    int response = await sqldb.update(table, currency, "currency_id=$id");
+    if (response > 0) {
+      Get.to(() => Currency());
+    }
   }
 
   // updateCurreny(Map update) async {

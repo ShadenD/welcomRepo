@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:welcom/controller/drawercontroller.dart';
 import 'package:welcom/controller/ordercontroller.dart';
 import 'package:welcom/view/addorder.dart';
+import 'package:welcom/widget/navigatorRail.dart';
 
 // ignore: must_be_immutable
 class Orders extends GetView<OrederController> {
@@ -12,7 +13,7 @@ class Orders extends GetView<OrederController> {
   var scaffoldkey3 = GlobalKey<ScaffoldState>();
 
   OrederController controller6 = Get.put(OrederController());
-  DrawerController1 drawerController1 = Get.put(DrawerController1());
+  NavigationController drawerController1 = Get.put(NavigationController());
   OrederController orederController = Get.put(OrederController());
   TextEditingController fitercontroller = TextEditingController();
 
@@ -20,47 +21,7 @@ class Orders extends GetView<OrederController> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldkey3,
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-                child: Row(
-              children: [
-                Image.asset(
-                  'assets/images/1.jpg',
-                  height: 70,
-                  width: 70,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Text('Welcome to your app'),
-              ],
-            )),
-            ListTile(
-              onTap: () {
-                drawerController1.usersOpen();
-                scaffoldkey3.currentState!.closeDrawer();
-              },
-              title: const Text('Users'),
-            ),
-            ListTile(
-              onTap: () {
-                drawerController1.currencyOpen();
-                scaffoldkey3.currentState!.closeDrawer();
-              },
-              title: const Text('Currency'),
-            ),
-            ListTile(
-              onTap: () {
-                drawerController1.orederOpen();
-                scaffoldkey3.currentState!.closeDrawer();
-              },
-              title: const Text('Orders'),
-            ),
-          ],
-        ),
-      ),
+      // extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Order Page"),
@@ -73,61 +34,92 @@ class Orders extends GetView<OrederController> {
           onPressed: () {
             Get.to(() => Add());
           }),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
+      body: Row(mainAxisSize: MainAxisSize.min, children: [
+        MyNavicator(),
+        Expanded(
           child: Column(
             children: <Widget>[
+              const SizedBox(
+                height: 10,
+              ),
               Form(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(
-                      width: 10.0,
+                      width: 1.0,
+                      height: 30,
                     ),
                     Expanded(
-                      child: TextField(
-                        controller: fitercontroller,
-                        decoration: InputDecoration(
-                            hintText: 'Search...',
-                            labelText: 'Search',
-                            prefixIcon: TextButton(
-                                onPressed: () async {
-                                  if (fitercontroller.text.toLowerCase() ==
-                                      "paid") {
-                                    orederController.getAllPaid();
-                                  } else {
+                      child: Container(
+                        margin: const EdgeInsets.all(10),
+                        child: TextField(
+                          controller: fitercontroller,
+                          decoration: InputDecoration(
+                              hintText: 'Search...',
+                              labelText: 'Search',
+                              suffix: GetX<OrederController>(
+                                  builder: (OrederController controller) {
+                                return TextButton(
+                                  child: controller.sorted.value
+                                      ? const Icon(
+                                          Icons.arrow_upward,
+                                          color:
+                                              Color.fromARGB(255, 64, 99, 67),
+                                          size: 30.0,
+                                        )
+                                      : const Icon(
+                                          Icons.arrow_downward,
+                                          color:
+                                              Color.fromARGB(255, 64, 99, 67),
+                                          size: 30.0,
+                                        ),
+                                  onPressed: () {
+                                    controller.invertSorting();
+                                    controller.sorting();
+                                  },
+                                );
+                              }),
+                              prefixIcon: TextButton(
+                                  onPressed: () async {
                                     if (fitercontroller.text.toLowerCase() ==
-                                        "not paid") {
-                                      controller.getAllNotPaid();
+                                        "paid") {
+                                      orederController.getAllPaid();
                                     } else {
-                                      orederController
-                                          .filter(fitercontroller.text);
+                                      if (fitercontroller.text.toLowerCase() ==
+                                          "not paid") {
+                                        controller.getAllNotPaid();
+                                      } else {
+                                        orederController
+                                            .filter(fitercontroller.text);
+                                      }
                                     }
-                                  }
-
-                                  if (fitercontroller.text == '') {
-                                    controller.states.clear();
-                                    controller.orders.clear();
-                                    controller.readDataOrder();
-                                  }
-                                },
-                                child: const Icon(Icons.search)),
-                            border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(25)),
-                            )),
-                        onChanged: (value) {
-                          if (value == '') {
-                            orederController.states.clear();
-                            orederController.orders.clear();
-                            orederController. readDataOrder()();
-                          }
-                        },
+                                    if (fitercontroller.text == '') {
+                                      controller.states.clear();
+                                      controller.orders.clear();
+                                      controller.readDataOrder();
+                                    }
+                                  },
+                                  child: const Icon(Icons.search)),
+                              border: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(25)),
+                              )),
+                          onChanged: (value) {
+                            if (value == '') {
+                              orederController.states.clear();
+                              orederController.orders.clear();
+                              orederController.readDataOrder()();
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(
+                height: 10,
               ),
               GetX<OrederController>(
                 builder: (OrederController orederController) => Expanded(
@@ -194,7 +186,7 @@ class Orders extends GetView<OrederController> {
             ],
           ),
         ),
-      ),
+      ]),
     );
   }
 }

@@ -38,7 +38,7 @@ class Add extends GetView<OrederController> {
                   margin: const EdgeInsets.only(top: 20),
                   padding: const EdgeInsets.all(10),
                   width: 350,
-                  height: 70,
+                  height: 100,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: Colors.grey),
@@ -46,8 +46,9 @@ class Add extends GetView<OrederController> {
                   child: TextFormField(
                     controller: datecontroller,
                     decoration: const InputDecoration(
-                        icon: Icon(Icons.calendar_today_rounded),
-                        labelText: 'Select Date'),
+                      label: Text('Select Date'),
+                      icon: Icon(Icons.calendar_today_rounded),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please fill the input';
@@ -66,41 +67,6 @@ class Add extends GetView<OrederController> {
                         datecontroller.text = date;
                       }
                     },
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: TextFormField(
-                            controller: amountcontroller,
-                            decoration: const InputDecoration(
-                              labelText: 'Amount',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: TextFormField(
-                            controller: equalamountcontroller,
-                            decoration: const InputDecoration(
-                              labelText: 'Equel Amount',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
                 const SizedBox(
@@ -147,6 +113,52 @@ class Add extends GetView<OrederController> {
                             child: Text(value['curreny_name'].toString()));
                       }).toList(),
                     ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: TextFormField(
+                            controller: amountcontroller,
+                            onChanged: (value) {
+                              if (amountcontroller.text != '') {
+                                double amount =
+                                    double.parse(amountcontroller.text);
+                                double equalAmount =
+                                    ordercontroller.equalAmmount(
+                                        amount, ordercontroller.rate.value);
+                                equalamountcontroller.text =
+                                    equalAmount.toString();
+                              }
+                            },
+                            decoration: const InputDecoration(
+                              labelText: 'Amount',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: TextFormField(
+                            controller: equalamountcontroller,
+                            decoration: const InputDecoration(
+                              labelText: 'Equel Amount',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(
@@ -266,7 +278,9 @@ class Add extends GetView<OrederController> {
                       };
                       await ordercontroller.insert('orders', order1);
                       // await ordercontroller.insertorder(order);
-                      Get.to(Orders());
+                      controller.orders.clear();
+                      controller.readDataOrder();
+                      Get.off(Orders());
                     }
                   },
                   child: const Text('ADD ORDER'),
