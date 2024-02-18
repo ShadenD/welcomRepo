@@ -2,7 +2,7 @@
 
 import 'package:get/get.dart';
 import 'package:welcom/model/sqlitedb2.dart';
-import 'package:welcom/view/CurrencyPage.dart';
+import 'package:welcom/view/sidebar.dart';
 
 class CurrencyController extends GetxController {
   SqlDB sqldb = SqlDB();
@@ -31,7 +31,7 @@ class CurrencyController extends GetxController {
         await sqldb.deletData("DELETE FROM currency WHERE currency_id=$id");
     currency.removeWhere((element) => element['currency_id'] == id);
     if (response > 0) {
-      Get.to(() => Currency());
+      Get.to(() => SideBarPage());
     }
   }
 
@@ -44,7 +44,7 @@ class CurrencyController extends GetxController {
   updateCurrency(String table, Map<String, String> currency, int id) async {
     int response = await sqldb.update(table, currency, "currency_id=$id");
     if (response > 0) {
-      Get.to(() => Currency());
+      // Get.to(() => Currency());
     }
   }
 

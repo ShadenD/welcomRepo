@@ -6,7 +6,7 @@ import 'package:welcom/controller/archivecontroller.dart';
 import 'package:welcom/controller/currencyController.dart';
 import 'package:welcom/controller/dropdowncontroller.dart';
 import 'package:welcom/controller/ordercontroller.dart';
-import 'package:welcom/view/OrderPage.dart';
+import 'package:welcom/view/sidebar.dart';
 
 class Add extends GetView<OrederController> {
   Add({super.key});
@@ -280,7 +280,7 @@ class Add extends GetView<OrederController> {
                       // await ordercontroller.insertorder(order);
                       controller.orders.clear();
                       controller.readDataOrder();
-                      Get.off(Orders());
+                      Get.off(() => SideBarPage());
                     }
                   },
                   child: const Text('ADD ORDER'),

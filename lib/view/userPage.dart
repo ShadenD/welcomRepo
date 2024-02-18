@@ -1,23 +1,23 @@
 // ignore_for_file: file_names, must_be_immutable, use_key_in_widget_constructors, avoid_print
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welcom/controller/archivecontroller.dart';
-import 'package:welcom/controller/drawercontroller.dart';
+// import 'package:welcom/controller/drawercontroller.dart';
 import 'package:welcom/model/sqlitedb2.dart';
+import 'package:welcom/view/adduser.dart';
+// import 'package:welcom/view/sidebar.dart';
 import 'package:welcom/view/editUser.dart';
-import 'package:welcom/view/home.dart';
-import 'package:welcom/widget/navigatorRail.dart';
+// import 'package:welcom/widget/navigatorRail.dart';
 // import 'package:welcom/view/home.dart';
 
 class Archives extends GetView<ArchiveController> {
   Archives({super.key});
   SqlDB sqldb = SqlDB();
   TextEditingController teSeach = TextEditingController();
-  NavigationController controller1 = Get.put(NavigationController());
+  // NavigationController controller1 = Get.put(NavigationController());
   ArchiveController archivecontroller = Get.put(ArchiveController());
-  // NavigationController drawerController1 = Get.put(NavigationController());
-
   var scaffoldkey = GlobalKey<ScaffoldState>();
   int selectedIndex = 0;
 
@@ -25,24 +25,16 @@ class Archives extends GetView<ArchiveController> {
   Widget build(BuildContext context) {
     return Scaffold(
       // extendBodyBehindAppBar: true,
-      key: scaffoldkey,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Users Archives"),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.logout,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Get.to(() => HomePage());
-            },
-          )
-        ],
-      ),
+      // key: scaffoldkey,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.white,
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+          onPressed: () {
+            Get.to(() => AddUser());
+          }),
       body: Row(children: [
-        MyNavicator(),
         Expanded(
           child: Column(
             children: [
@@ -117,10 +109,11 @@ class Archives extends GetView<ArchiveController> {
                                         onPressed: () async {
                                           Get.to(Editarchive(), arguments: {
                                             "id": user['id'],
-                                            "username": user['username'],
-                                            "email": user['email'],
-                                            "pass": user['pass'],
-                                            "photo": user['photo'],
+                                            "username":
+                                                user['username'].toString(),
+                                            "email": user['email'].toString(),
+                                            "pass": user['pass'].toString(),
+                                            "photo": user['photo'].toString(),
                                           });
                                         },
                                         icon: const Icon(
@@ -207,7 +200,6 @@ class Archives extends GetView<ArchiveController> {
                   // ),
                 ),
               ),
-              // Add your other widgets here if needed
             ],
           ),
         ),

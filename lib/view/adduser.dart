@@ -1,5 +1,4 @@
-// ignore_for_file: file_names, use_build_context_synchronously, must_be_immutable, unrelated_type_equality_checks
-
+// ignore_for_file: must_be_immutable, avoid_print
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
@@ -11,24 +10,17 @@ import 'package:welcom/controller/archivecontroller.dart';
 import 'package:welcom/controller/signupcontroller.dart';
 import 'package:welcom/model/sqlitedb2.dart';
 import 'package:welcom/view/sidebar.dart';
+import 'package:welcom/view/userPage.dart';
 
-class Editarchive extends GetView<ArchiveController> {
-  Editarchive({super.key});
-  SqlDB sqldb = SqlDB();
-  GlobalKey<FormState> formstate = GlobalKey();
-
-  TextEditingController textEditingController1 = TextEditingController();
-  TextEditingController userEditingController1 = TextEditingController();
-  TextEditingController confirmpassword1 = TextEditingController();
-  TextEditingController passEditingController1 = TextEditingController();
-  ArchiveController archiveController = Get.put(ArchiveController());
+class AddUser extends GetView<SignupPageController> {
+  AddUser({super.key});
   SignupPageController controller3 = Get.put(SignupPageController());
+  ArchiveController controller2 = Get.put(ArchiveController());
 
+  SqlDB sqldb = SqlDB();
+  String? vall;
   @override
   Widget build(BuildContext context) {
-    textEditingController1.text = Get.arguments!['email'];
-    userEditingController1.text = Get.arguments!['username'];
-    passEditingController1.text = Get.arguments!['pass'];
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
@@ -47,6 +39,7 @@ class Editarchive extends GetView<ArchiveController> {
         ),
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           height: MediaQuery.of(context).size.height - 30,
@@ -59,7 +52,7 @@ class Editarchive extends GetView<ArchiveController> {
                   FadeInUp(
                       duration: const Duration(milliseconds: 1000),
                       child: const Text(
-                        "Edit User",
+                        "Add Users Here",
                         style: TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold),
                       )),
@@ -69,15 +62,19 @@ class Editarchive extends GetView<ArchiveController> {
                   FadeInUp(
                       duration: const Duration(milliseconds: 1200),
                       child: Text(
-                        "Edit your information",
+                        "Add User",
                         style: TextStyle(fontSize: 15, color: Colors.grey[700]),
                       )),
                 ],
               ),
+              // const SizedBox(
+              //   height: 40,
+              // ),
               Form(
-                key: formstate,
+                key: controller3.formstate,
                 child: Column(
-                  children: <Widget>[
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -135,31 +132,34 @@ class Editarchive extends GetView<ArchiveController> {
                     ),
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
+                        child: GetBuilder<SignupPageController>(
+                          builder: (c) => TextFormField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
+                              border: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
+                            ),
+                            controller: controller3.textEditingController,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              //  controller3.validemail(value);
+                              vall = value!;
+                              if (value.isEmpty) {
+                                return "الحقل فارغ";
+                              } else if (RegExp(
+                                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                  .hasMatch(value)) {
+                              } else {
+                                return "Enter valid Email";
+                              }
+                              return null;
+                            },
                           ),
-                          controller: textEditingController1,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            archiveController.vall = value!;
-                            if (value.isEmpty) {
-                              return "الحقل فارغ";
-                            } else if (RegExp(
-                                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                                .hasMatch(value)) {
-                            } else {
-                              return "Enter valid Email";
-                            }
-                            return null;
-                          },
                         )),
                     const SizedBox(
                       height: 10,
@@ -191,11 +191,11 @@ class Editarchive extends GetView<ArchiveController> {
                                 borderSide:
                                     BorderSide(color: Colors.grey.shade400)),
                           ),
-                          controller: userEditingController1,
-                          // keyboardType: TextInputType.text,
+                          controller: controller3.userEditingController,
+                          keyboardType: TextInputType.emailAddress,
                           validator: (value) {
-                            // archiveController.vall = value!;
-                            if (value!.isEmpty) {
+                            vall = value!;
+                            if (value.isEmpty) {
                               return "الحقل فارغ";
                             }
                             return null;
@@ -220,44 +220,46 @@ class Editarchive extends GetView<ArchiveController> {
                     ),
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
-                        child: TextFormField(
-                          // onChanged: (password) =>
-                          //     archiveController.onPasswordChanged(password),
-                          obscureText: archiveController.passToggle,
-                          decoration: InputDecoration(
-                            suffix: InkWell(
-                              onTap: () {
-                                archiveController.passToggle =
-                                    !archiveController.passToggle;
-                              },
-                              child: Icon(
-                                archiveController.passToggle
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.grey,
+                        child: Obx(
+                          () => TextFormField(
+                            // onChanged: (password) =>
+                            //     controller3.onPasswordChanged(password),
+                            obscureText: controller3.passToggle.value,
+                            decoration: InputDecoration(
+                              suffix: InkWell(
+                                onTap: () {
+                                  controller3.passToggle.value =
+                                      !controller3.passToggle.value;
+                                },
+                                child: Icon(
+                                  controller3.passToggle.value
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
                               ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
+                              border: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
+                            controller: controller3.passEditingController,
+                            keyboardType: TextInputType.visiblePassword,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Enter your passward";
+                              } else if (controller3
+                                      .passEditingController.text.length <
+                                  6) {
+                                return "Passward length should be more than 6 characters ";
+                              }
+                              return null;
+                            },
                           ),
-                          controller: passEditingController1,
-                          keyboardType: TextInputType.visiblePassword,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Enter your passward";
-                              // } else if (controller4
-                              //         .passEditingController.text.length <
-                              //     6) {
-                              //   return "Passward length should be more than 6 characters ";
-                            }
-                            return null;
-                          },
                         )),
                     const SizedBox(
                       height: 2,
@@ -278,67 +280,71 @@ class Editarchive extends GetView<ArchiveController> {
                     ),
                     FadeInUp(
                         duration: const Duration(milliseconds: 1200),
-                        child: TextFormField(
-                          onChanged: (password) =>
-                              archiveController.onPasswordChanged(password),
-                          obscureText: archiveController.passToggle,
-                          decoration: InputDecoration(
-                            suffix: InkWell(
-                              onTap: () {
-                                archiveController.passToggle =
-                                    !archiveController.passToggle;
-                              },
-                              child: Icon(
-                                archiveController.passToggle
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.grey,
+                        child: Obx(
+                          () => TextFormField(
+                            // onChanged: (password) =>
+                            //     controller3.onPasswordChanged(password),
+                            obscureText: controller3.passToggle.value,
+                            decoration: InputDecoration(
+                              suffix: InkWell(
+                                onTap: () {
+                                  controller3.passToggle.value =
+                                      !controller3.passToggle.value;
+                                },
+                                child: Icon(
+                                  controller3.passToggle.value
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
                               ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
+                              border: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey.shade400)),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade400)),
+                            controller: controller3.confirmpassword,
+                            keyboardType: TextInputType.visiblePassword,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please re-enter password';
+                              }
+
+                              if (controller3.passEditingController.text !=
+                                  controller3.confirmpassword.text) {
+                                return "Password does not match";
+                              }
+
+                              return null;
+                            },
                           ),
-                          controller: confirmpassword1,
-                          keyboardType: TextInputType.visiblePassword,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please re-enter password';
-                            }
-
-                            if (passEditingController1.text !=
-                                confirmpassword1.text) {
-                              return "Password does not match";
-                            }
-
-                            return null;
-                          },
                         )),
                     const SizedBox(
                       height: 2,
                     ),
-                    FlutterPwValidator(
-                      defaultColor: Colors.black,
-                      controller: archiveController.controller,
-                      successColor: Colors.green.shade700,
-                      minLength: 8,
-                      uppercaseCharCount: 1,
-                      numericCharCount: 2,
-                      specialCharCount: 1,
-                      normalCharCount: 4,
-                      width: 350,
-                      height: 150,
-                      onSuccess: () {
-                        archiveController.success;
-                      },
-                      onFail: () {
-                        archiveController.fail;
-                      },
+                    GetBuilder<SignupPageController>(
+                      builder: (c) => FlutterPwValidator(
+                        defaultColor: Colors.black,
+                        controller: controller3.passEditingController,
+                        successColor: Colors.green.shade700,
+                        minLength: 8,
+                        uppercaseCharCount: 1,
+                        numericCharCount: 2,
+                        specialCharCount: 1,
+                        normalCharCount: 4,
+                        width: 350,
+                        height: 150,
+                        onSuccess: () {
+                          controller3.succ;
+                        },
+                        onFail: () {
+                          controller3.fail;
+                        },
+                      ),
                     ),
                     const SizedBox(
                       height: 2,
@@ -362,32 +368,48 @@ class Editarchive extends GetView<ArchiveController> {
                       minWidth: double.infinity,
                       height: 60,
                       onPressed: () async {
-                        if (formstate.currentState!.validate()) {
-                          Map<String, String> user = {
-                            "email": textEditingController1.text,
-                            "username": userEditingController1.text,
-                            "pass": passEditingController1.text,
+                        if (controller3.formstate.currentState!.validate()) {
+                          await controller2.inseretuser({
+                            'username': controller3.userEditingController.text,
+                            'email': controller3.textEditingController.text,
+                            'pass': controller3.passEditingController.text,
                             'photo': controller3.selectedImagePath.value,
-                          };
-
-                          await controller.updateUser(
-                              'users', user, Get.arguments['id']);
-
-                          archiveController.users.clear();
-                          archiveController.readData();
-                          Get.to(() => SideBarPage());
+                          });
+                          print("Data filled successfully");
+                          Get.to(SideBarPage());
+                          controller3.textEditingController.clear();
+                          controller3.passEditingController.clear();
+                          controller3.confirmpassword.clear();
                         }
                       },
-                      color: Colors.blue,
+                      color: Colors.greenAccent,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50)),
                       child: const Text(
-                        "Edit",
+                        "Add User",
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 18),
                       ),
                     ),
+                  )),
+              FadeInUp(
+                  duration: const Duration(milliseconds: 1600),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Go to Archive"),
+                      InkWell(
+                        onTap: () {
+                          Get.to(Archives());
+                        },
+                        child: const Text(
+                          " Go to Archives",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 18),
+                        ),
+                      ),
+                    ],
                   )),
             ],
           ),

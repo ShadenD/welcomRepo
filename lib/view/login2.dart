@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:welcom/controller/logincontroller.dart';
 import 'package:welcom/controller/remember_me_controller.dart';
 import 'package:welcom/main.dart';
-import 'package:welcom/view/archivePage.dart';
-import 'package:welcom/view/home.dart';
-import 'package:welcom/view/signup1.dart';
 import 'package:welcom/model/sqlitedb2.dart';
+import 'package:welcom/view/home.dart';
+import 'package:welcom/view/sidebar.dart';
+import 'package:welcom/view/signup1.dart';
 
 class Loginpage2 extends GetView<LoginPageController> {
   Loginpage2({super.key});
@@ -26,10 +26,6 @@ class Loginpage2 extends GetView<LoginPageController> {
 
   @override
   Widget build(BuildContext context) {
-    // textEditingController.text =
-    //     sharedPreferences!.getString('email').toString();
-    // textEditingController.text =
-    //     sharedPreferences!.getString('pass').toString();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -266,7 +262,7 @@ class Loginpage2 extends GetView<LoginPageController> {
                                       'User with the provided email does not exist!');
                                 } else {
                                   // ignore: use_build_context_synchronously
-                                  Get.to(() => Archives());
+                                  Get.to(() => SideBarPage());
                                 }
                               }
                             },

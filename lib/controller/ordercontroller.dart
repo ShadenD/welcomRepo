@@ -85,7 +85,7 @@ class OrederController extends GetxController {
     return stateKeyword.value;
   }
 
-  readDataOrder() async {
+  Future<dynamic> readDataOrder() async {
     List response = await sqldb.readJoin('''
     SELECT users.username AS username, currency.curreny_name AS currencyName, 
     orders.order_date, orders.status AS status, orders.order_amount AS amount,

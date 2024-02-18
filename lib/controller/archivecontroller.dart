@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welcom/model/sqlitedb2.dart';
-import 'package:welcom/view/archivePage.dart';
+import 'package:welcom/view/sidebar.dart';
 
 class ArchiveController extends GetxController {
   var scaffoldkey = GlobalKey<ScaffoldState>();
@@ -77,7 +77,7 @@ class ArchiveController extends GetxController {
     int response = await sqldb.deletData("DELETE FROM users WHERE id=$id");
     users.removeWhere((element) => element['id'] == id);
     if (response > 0) {
-      Get.to(() => Archives());
+      Get.to(() => SideBarPage());
     }
   }
 

@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:welcom/controller/drawercontroller.dart';
+// import 'package:welcom/controller/drawercontroller.dart';
 import 'package:welcom/controller/ordercontroller.dart';
 import 'package:welcom/view/addorder.dart';
-import 'package:welcom/widget/navigatorRail.dart';
+// import 'package:welcom/widget/navigatorRail.dart';
 
 // ignore: must_be_immutable
 class Orders extends GetView<OrederController> {
@@ -13,19 +13,14 @@ class Orders extends GetView<OrederController> {
   var scaffoldkey3 = GlobalKey<ScaffoldState>();
 
   OrederController controller6 = Get.put(OrederController());
-  NavigationController drawerController1 = Get.put(NavigationController());
   OrederController orederController = Get.put(OrederController());
   TextEditingController fitercontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldkey3,
+      // key: scaffoldkey3,
       // extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Order Page"),
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.white,
@@ -35,7 +30,6 @@ class Orders extends GetView<OrederController> {
             Get.to(() => Add());
           }),
       body: Row(mainAxisSize: MainAxisSize.min, children: [
-        MyNavicator(),
         Expanded(
           child: Column(
             children: <Widget>[
@@ -109,7 +103,7 @@ class Orders extends GetView<OrederController> {
                             if (value == '') {
                               orederController.states.clear();
                               orederController.orders.clear();
-                              orederController.readDataOrder()();
+                              orederController.readDataOrder();
                             }
                           },
                         ),

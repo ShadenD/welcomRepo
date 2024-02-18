@@ -2,53 +2,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welcom/controller/currencyController.dart';
-import 'package:welcom/controller/drawercontroller.dart';
+import 'package:welcom/view/addCurrency.dart';
+// import 'package:welcom/controller/drawercontroller.dart';
 import 'package:welcom/view/editCurren.dart';
-import 'package:welcom/widget/navigatorRail.dart';
+// import 'package:welcom/widget/navigatorRail.dart';
 
 // ignore: must_be_immutable
 class Currency extends GetView<CurrencyController> {
   Currency({super.key});
   var scaffoldKey2 = GlobalKey<ScaffoldState>();
   TextEditingController teSeach1 = TextEditingController();
-  NavigationController controllerDrawer = Get.put(NavigationController());
+  // NavigationController controllerDrawer = Get.put(NavigationController());
   CurrencyController controllerCurrency = Get.put(CurrencyController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey2,
+      // key: scaffoldKey2,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.white,
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+          onPressed: () {
+            Get.to(() => AddCurr());
+          }),
       // extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Currency Page"),
-        actions: <Widget>[
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  Get.toNamed('/addcurr');
-                },
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.logout,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  // controllerLogin.save();
-                  Get.toNamed('/');
-                },
-              )
-            ],
-          )
-        ],
-      ),
       body: Row(children: [
-        MyNavicator(),
         Expanded(
           child: Column(
             children: [
@@ -59,7 +38,6 @@ class Currency extends GetView<CurrencyController> {
                     if (value == '') {
                       controllerCurrency.currency.clear();
                       controllerCurrency.readData2();
-                      //Get.to(() => Currency());
                     }
                   },
                   controller: teSeach1,
@@ -125,7 +103,7 @@ class Currency extends GetView<CurrencyController> {
                                         )),
                                     IconButton(
                                         onPressed: () async {
-                                          Get.off(EditCurr(), arguments: {
+                                          Get.to(EditCurr(), arguments: {
                                             'id': controller.currency[i]
                                                 ['currency_id'],
                                             'curreny_name': controller

@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welcom/controller/currencyController.dart';
-import 'package:welcom/view/CurrencyPage.dart';
+import 'package:welcom/view/sidebar.dart';
 
 class AddCurr extends GetView<CurrencyController> {
   AddCurr({super.key});
@@ -53,7 +53,6 @@ class AddCurr extends GetView<CurrencyController> {
           const SizedBox(
             height: 20,
           ),
-
           TextFormField(
             controller: controllerRate,
             keyboardType: TextInputType.number,
@@ -82,10 +81,9 @@ class AddCurr extends GetView<CurrencyController> {
                 };
                 await controller.insert('currency', currency);
 
-                // controllerCurr.currency.clear();
-                // controllerCurr.readData2();
-                Get.off(() => Currency());
-                //print('${controllerCurrName.text}');
+                controllerCurr.currency.clear();
+                controllerCurr.readData2();
+                Get.off(() => SideBarPage());
               },
               color: Colors.greenAccent,
               elevation: 0,
@@ -97,13 +95,6 @@ class AddCurr extends GetView<CurrencyController> {
               ),
             ),
           ),
-          // ListView.builder(
-          //     itemCount: controllerCurr.currency.length,
-          //     shrinkWrap: true,
-          //     itemBuilder: (context, index) {
-          //       return Text("${controllerCurr.currency[index]['curreny_id']}");
-          //     })
-          // Text("${controllerCurr.currency[i]['curreny_name']}"),
         ]),
       ),
     );

@@ -1,8 +1,10 @@
-// ignore_for_file: must_be_immutable, file_names
+// ignore_for_file: must_be_immutable, file_names, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welcom/controller/currencyController.dart';
+import 'package:welcom/controller/sidebarcontroller.dart';
+import 'package:welcom/view/sidebar.dart';
 
 class EditCurr extends StatelessWidget {
   EditCurr({super.key});
@@ -10,12 +12,13 @@ class EditCurr extends StatelessWidget {
   TextEditingController currsymbol = TextEditingController();
   TextEditingController currrate = TextEditingController();
   CurrencyController currencyController = Get.put(CurrencyController());
+  SideBarController sideBarController = Get.put(SideBarController());
 
   @override
   Widget build(BuildContext context) {
-    currname.text = Get.arguments?['curreny_name'];
-    currsymbol.text = Get.arguments?['currency_symbol'];
-    currrate.text = Get.arguments?['rate'];
+    currname.text = Get.arguments!['curreny_name'].toString();
+    currsymbol.text = Get.arguments!['currency_symbol'].toString();
+    currrate.text = Get.arguments!['rate'].toString();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Currency Here"),
@@ -75,6 +78,7 @@ class EditCurr extends StatelessWidget {
             minWidth: double.infinity,
             height: 60,
             onPressed: () async {
+              // sideBarController.index.value = 1;
               Map<String, String> currency = {
                 'curreny_name': currname.text,
                 'currency_symbol': currsymbol.text,
@@ -82,6 +86,12 @@ class EditCurr extends StatelessWidget {
               };
               await currencyController.updateCurrency(
                   'currency', currency, Get.arguments['id']);
+              print(sideBarController.index.value);
+              currencyController.currency.clear();
+              currencyController.readData2();
+              Get.off(() => SideBarPage());
+
+              //Get.to(() => sideBarController.pages[p]);
             },
             color: Colors.greenAccent,
             elevation: 0,
